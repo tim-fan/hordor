@@ -1,6 +1,5 @@
 from django.test import TestCase
-
-# Create your tests here.
+from django.urls import reverse
 
 from .models import Item, Container
 
@@ -23,3 +22,9 @@ class ItemAndContainerModelTests(TestCase):
         self.assertEqual(c1.stored_items.count(), 1)
         self.assertEqual(c1.stored_containers.count(), 1)
         self.assertIs(c2.container, c1)
+
+class ViewTests(TestCase):
+
+    def test_index(self):
+        response = self.client.get(reverse('inventory:index'))
+        self.assertEqual(response.status_code, 200)
