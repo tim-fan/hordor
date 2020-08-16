@@ -1,8 +1,9 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.shortcuts import render
 from .models import Item, Container
+from .forms import ItemForm
 
 def index(request):
     item_list = Item.objects.order_by('-creation_date')
@@ -12,15 +13,6 @@ def index(request):
         'container_list': container_list,
     }
     return render(request, 'inventory/index.html',context)
-
-def new_item(request):
-    return render(request, 'inventory/new_item.html')
-
-def process_new_item(request):
-    name = request.POST['name']
-    new_item = Item(name=name)
-    new_item.save()
-    return HttpResponseRedirect(reverse('inventory:index'))
 
 class ItemDetailView(generic.DetailView):
     model = Item
@@ -35,3 +27,9 @@ class ContainerDetailView(generic.DetailView):
 class ContainerListView(generic.ListView):
     def get_queryset(self):
         return Container.objects.order_by('-creation_date')
+
+class NewItemView(generic.CreateView):
+    model = Item
+    form_class = ItemForm
+    template_name = 'inventory/new_item.html'
+    success_url = reverse_lazy('inventory:index')

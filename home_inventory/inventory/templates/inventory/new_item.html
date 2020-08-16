@@ -1,8 +1,6 @@
 <h1>Add New Item</h1>
-
-<form action="{% url 'inventory:process_new_item' %}" method="post">
-    {% csrf_token %}
-    <input type="text" name="name" id="item-name-input"/>
-    <label for="item-name-input">Name</label><br>
-    <input type="submit" value="Add item">
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Add Item</button>
 </form>
