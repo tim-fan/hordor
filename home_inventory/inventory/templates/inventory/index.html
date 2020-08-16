@@ -2,7 +2,7 @@
 {% if item_list %}
     <ul>
     {% for item in item_list %}
-        <li><a href="{% url 'item' item.id %}">{{ item.name }}</a></li>
+        <li><a href="{% url 'inventory:item' item.id %}">{{ item.name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
@@ -13,7 +13,7 @@
 {% if container_list %}
     <ul>
     {% for container in container_list %}
-        <li><a href="{% url 'container' container.id %}">{{ container.name }}</a></li>
+        <li><a href="{% url 'inventory:container' container.id %}">{{ container.name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}

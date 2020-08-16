@@ -2,17 +2,17 @@
 <h3>Contents:</h3>
 {% if container.stored_items or container.stored_containers%}
     {% for item in container.stored_items.all %}
-        <li>Item <a href="{% url 'item' item.id %}">{{ item.id }}</a></li>
+        <li>Item <a href="{% url 'inventory:item' item.id %}">{{ item.id }}</a></li>
     {% endfor %}
     {% for container in container.stored_containers.all %}
-        <li>Container <a href="{% url 'container' container.id %}">{{ container.id }}</a></li>
+        <li>Container <a href="{% url 'inventory:container' container.id %}">{{ container.id }}</a></li>
     {% endfor %}
 {% else %}
     <p>No items in container</p>
 {% endif %}
 <h3>Stored in:</h3>
 {% if container.container %}
-    <li>Container <a href="{% url 'container' container.container.id %}">{{ container.container.name }}</a></li>
+    <li>Container <a href="{% url 'inventory:container' container.container.id %}">{{ container.container.name }}</a></li>
 {% else %}
     <li>Not in a container</li>
 {% endif %}
