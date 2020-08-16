@@ -26,3 +26,4 @@ python manage.py runserver
 * Item tags / categorisation
 * Handle multiple photos per object
 * Item storage history (dates of container change) 
+* Validation - no cyclical container relations (A contains B, B contains A)
