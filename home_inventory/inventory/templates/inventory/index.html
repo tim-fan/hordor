@@ -1,0 +1,21 @@
+<h2>Items</h2>
+{% if item_list %}
+    <ul>
+    {% for item in item_list %}
+        <li><a href="{% url 'item' item.id %}">{{ item.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No items in inventory.</p>
+{% endif %}
+
+<h2>Containers</h2>
+{% if container_list %}
+    <ul>
+    {% for container in container_list %}
+        <li><a href="{% url 'container' container.id %}">{{ container.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No containers in inventory.</p>
+{% endif %}

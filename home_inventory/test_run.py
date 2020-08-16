@@ -1,6 +1,5 @@
 import django
 django.setup()
-# from inventory.models import Toy, Box
 from inventory.models import Item, Container
 
 print("run")
