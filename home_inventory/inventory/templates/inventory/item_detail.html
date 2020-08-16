@@ -1,7 +1,7 @@
 <h2>Item {{ item }}</h2>
 <h2>Stored in:</h2>
 {% if item.container %}
-    <p>Container <a href="{% url 'inventory:container' item.container.id %}">{{ item.container.name }}</a></p>
+    <p>Container <a href="{% url 'inventory:container_detail' item.container.id %}">{{ item.container.name }}</a></p>
 {% else %}
     <p>Not in a container</p>
 {% endif %}

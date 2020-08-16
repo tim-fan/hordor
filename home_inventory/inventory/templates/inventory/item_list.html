@@ -9,15 +9,4 @@
     <p>No items in inventory.</p>
 {% endif %}
 
-<h2>Containers</h2>
-{% if container_list %}
-    <ul>
-    {% for container in container_list %}
-        <li><a href="{% url 'inventory:container_detail' container.id %}">{{ container.name }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No containers in inventory.</p>
-{% endif %}
-
 <a href="{% url 'inventory:new_item' %}">Create new item</a>

@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from django.shortcuts import render, get_object_or_404
+from django.views import generic
+from django.shortcuts import render
 from .models import Item, Container
 
 def index(request):
@@ -12,12 +13,8 @@ def index(request):
     }
     return render(request, 'inventory/index.html',context)
 
-def item(request, item_id):
-    item = get_object_or_404(Item, pk=item_id)
-    return render(request, 'inventory/item.html', {'item': item})
-
 def new_item(request):
-    return render(request, 'inventory/newitem.html')
+    return render(request, 'inventory/new_item.html')
 
 def process_new_item(request):
     name = request.POST['name']
@@ -25,6 +22,16 @@ def process_new_item(request):
     new_item.save()
     return HttpResponseRedirect(reverse('inventory:index'))
 
-def container(request, container_id):
-    container = get_object_or_404(Container, pk=container_id)
-    return render(request, 'inventory/container.html', {'container': container})
+class ItemDetailView(generic.DetailView):
+    model = Item
+
+class ItemListView(generic.ListView):
+    def get_queryset(self):
+        return Item.objects.order_by('-creation_date')
+
+class ContainerDetailView(generic.DetailView):
+    model = Container
+
+class ContainerListView(generic.ListView):
+    def get_queryset(self):
+        return Container.objects.order_by('-creation_date')
