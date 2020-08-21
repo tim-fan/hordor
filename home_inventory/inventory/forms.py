@@ -5,3 +5,7 @@ class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
         fields = ['name', 'photo', 'container']
+
+        widgets = {
+            'photo': forms.FileInput(attrs={'capture': 'environment'}),
+        }

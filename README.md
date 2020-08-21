@@ -17,7 +17,6 @@ python manage.py runserver
 
 * Add photo upload for containers
 * Show photos on object views (detail and list)
-* Support image upload via android camera
 * Bulk-add objects to a container
 * Add fields
     * Item value
