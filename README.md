@@ -24,3 +24,5 @@ python manage.py runserver
 * Item tags / categorisation
 * Handle multiple photos per object
 * Item storage history (dates of container change) 
+
+  Try https://django-simple-history.readthedocs.io/en/latest/index.html
