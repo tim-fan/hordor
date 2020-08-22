@@ -1,4 +1,5 @@
-<h2>Item {{ item }}</h2>
+<h2>Item: {{ item.name }}</h2>
+<img src="{{ item.photo.url }}" alt="{{ item.name }}" width="200">
 <h2>Stored in:</h2>
 {% if item.container %}
     <p>Container <a href="{% url 'inventory:container_detail' item.container.id %}">{{ item.container.name }}</a></p>
