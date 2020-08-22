@@ -17,7 +17,6 @@ python manage.py runserver
 
 * Object edit views
 * Handle case when item has no photo associated
-* Show photos on object list views
 * Bulk-add objects to a container
 * Add fields
     * Item value
