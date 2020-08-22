@@ -15,7 +15,8 @@ python manage.py runserver
 
 ## ToDo
 
-* Show photos on object views (detail and list)
+* Object edit views
+* Show photos on object list views
 * Bulk-add objects to a container
 * Add fields
     * Item value
