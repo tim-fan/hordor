@@ -16,6 +16,7 @@ python manage.py runserver
 ## ToDo
 
 * Object edit views
+* Handle case when item has no photo associated
 * Show photos on object list views
 * Bulk-add objects to a container
 * Add fields
