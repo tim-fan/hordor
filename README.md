@@ -15,7 +15,6 @@ python manage.py runserver
 
 ## ToDo
 
-* Add photo upload for containers
 * Show photos on object views (detail and list)
 * Bulk-add objects to a container
 * Add fields

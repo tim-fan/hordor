@@ -10,5 +10,5 @@ urlpatterns = [
     path('item/new/', views.NewItemView.as_view(), name='new_item'),
     path('<int:pk>/container', views.ContainerDetailView.as_view(), name='container_detail'),
     path('container/list/', views.ContainerListView.as_view(), name='container_list'),   
-
+    path('container/new/', views.NewContainerView.as_view(), name='new_container'),
 ]

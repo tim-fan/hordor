@@ -3,7 +3,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.shortcuts import render
 from .models import Item, Container
-from .forms import ItemForm
+from .forms import ItemForm, ContainerForm
 
 def index(request):
     item_list = Item.objects.order_by('-creation_date')
@@ -33,3 +33,10 @@ class NewItemView(generic.CreateView):
     form_class = ItemForm
     template_name = 'inventory/new_item.html'
     success_url = reverse_lazy('inventory:index')
+
+class NewContainerView(generic.CreateView):
+    model = Container
+    form_class = ContainerForm
+    template_name = 'inventory/new_container.html'
+    success_url = reverse_lazy('inventory:index')
+
