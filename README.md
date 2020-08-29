@@ -15,8 +15,8 @@ python manage.py runserver
 
 ## ToDo
 
-* Object edit views
 * Object delete views
+* Bootstrap styling on forms?
 * Handle case when item has no photo associated
 * Item storage history (dates of container change) 
   * Try https://django-simple-history.readthedocs.io/en/latest/index.html
