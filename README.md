@@ -16,6 +16,9 @@ python manage.py runserver
 ## ToDo
 
 * Object delete views
+* Compress images on save
+  * try https://stackoverflow.com/questions/33077804/losslessly-compressing-images-on-django
+* update views return to detail view
 * Bootstrap styling on forms?
 * Handle case when item has no photo associated
 * Item storage history (dates of container change) 
@@ -25,6 +28,7 @@ python manage.py runserver
     * Item value
     * Description
 * Add container forest view
+    * something like https://codepen.io/dsheiko/pen/MvEpXm/
 * gallery view
 * Item tags / categorisation
 * Handle multiple photos per object
