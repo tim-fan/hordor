@@ -1,12 +1,12 @@
 <h2>Container: {{ container }}</h2>
-<img src="{{ container.photo.url }}" alt="{{ container.name }}" width="200">
+<img src="{{ container.photo.url }}" alt="{{ container.name }}" height="200">
 <h3>Contents:</h3>
 {% if container.stored_items or container.stored_containers%}
     {% for item in container.stored_items.all %}
         <li>
             <a href="{% url 'inventory:item_detail' item.id %}">{{ item.name }}</a>
             {% if item.photo %}
-                <br/><img src="{{ item.photo.url }}" alt="{{ item.name }}" width="200">
+                <br/><img src="{{ item.photo.url }}" alt="{{ item.name }}" height="200">
             {% endif %}    
         </li>
     {% endfor %}
@@ -14,7 +14,7 @@
         <li>
             <a href="{% url 'inventory:container_detail' container.id %}">{{ container.name }}</a>
             {% if container.photo %}
-                <br/><img src="{{ container.photo.url }}" alt="{{ container.name }}" width="200">
+                <br/><img src="{{ container.photo.url }}" alt="{{ container.name }}" height="200">
             {% endif %}    
         </li>
     {% endfor %}
@@ -27,6 +27,7 @@
 {% else %}
     <li>Not in a container</li>
 {% endif %}
-
+<br/>
+<a href="{% url 'inventory:container_update' container.id %}">Edit Container</a>
 <br/>
 <a href="{% url 'inventory:index' %}">Home</a>

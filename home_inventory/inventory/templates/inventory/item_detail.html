@@ -1,11 +1,13 @@
 <h2>Item: {{ item.name }}</h2>
-<img src="{{ item.photo.url }}" alt="{{ item.name }}" width="200">
+<img src="{{ item.photo.url }}" alt="{{ item.name }}" height="200">
 <h2>Stored in:</h2>
 {% if item.container %}
     <p>Container <a href="{% url 'inventory:container_detail' item.container.id %}">{{ item.container.name }}</a></p>
+    <img src="{{ item.container.photo.url }}" alt="{{ item.container.name }}" height="200">
 {% else %}
     <p>Not in a container</p>
 {% endif %}
-
+<br/>
+<a href="{% url 'inventory:item_update' item.id %}">Edit item</a>
 <br/>
 <a href="{% url 'inventory:index' %}">Home</a>

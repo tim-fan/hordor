@@ -40,3 +40,14 @@ class NewContainerView(generic.CreateView):
     template_name = 'inventory/new_container.html'
     success_url = reverse_lazy('inventory:index')
 
+class ItemUpdateView(generic.UpdateView):
+    model = Item
+    fields = ['name', 'photo', 'container']
+    template_name = 'inventory/item_update.html'
+    success_url = reverse_lazy('inventory:index')
+
+class ContainerUpdateView(generic.UpdateView):
+    model = Container
+    fields = ['name', 'photo', 'container']
+    template_name = 'inventory/container_update.html'
+    success_url = reverse_lazy('inventory:index')

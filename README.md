@@ -16,14 +16,17 @@ python manage.py runserver
 ## ToDo
 
 * Object edit views
+* Object delete views
 * Handle case when item has no photo associated
+* Item storage history (dates of container change) 
 * Bulk-add objects to a container
 * Add fields
     * Item value
     * Description
 * Add container forest view
+* gallery view
 * Item tags / categorisation
 * Handle multiple photos per object
-* Item storage history (dates of container change) 
+
 
   Try https://django-simple-history.readthedocs.io/en/latest/index.html
