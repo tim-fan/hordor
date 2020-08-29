@@ -1,12 +1,16 @@
+{% extends 'inventory/base.html' %}
+{% block content %}
 <h2>Items</h2>
 {% if item_list %}
-    <ul>
+<ul>
     {% for item in item_list %}
-        <li><a href="{% url 'inventory:item_detail' item.id %}">{{ item.name }}</a></li>
+    <li><a href="{% url 'inventory:item_detail' item.id %}">{{ item.name }}</a></li>
     {% endfor %}
-    </ul>
+</ul>
 {% else %}
-    <p>No items in inventory.</p>
+<p>No items in inventory.</p>
 {% endif %}
 
 <a href="{% url 'inventory:new_item' %}">Create new item</a>
+
+{% endblock %}

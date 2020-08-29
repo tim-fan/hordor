@@ -1,6 +1,10 @@
+{% extends 'inventory/base.html' %}
+{% block content %}
 <h1>Update Container</h1>
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
   {{ form.as_p }}
-  <button type="submit">Update Container</button>  
+  <button type="submit">Update Container</button>
 </form>
+
+{% endblock %}
