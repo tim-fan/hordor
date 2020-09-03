@@ -1,38 +1,66 @@
 {% extends 'inventory/base.html' %}
 {% block content %}
-<h2>Container: {{ container }}</h2>
-<img src="{{ container.photo.url }}" alt="{{ container.name }}" height="200">
-<h3>Contents:</h3>
-{% if container.stored_items or container.stored_containers%}
-{% for item in container.stored_items.all %}
-<li>
-    <a href="{% url 'inventory:item_detail' item.id %}">{{ item.name }}</a>
-    {% if item.photo %}
-    <br /><img src="{{ item.photo.url }}" alt="{{ item.name }}" height="200">
-    {% endif %}
-</li>
-{% endfor %}
-{% for container in container.stored_containers.all %}
-<li>
-    <a href="{% url 'inventory:container_detail' container.id %}">{{ container.name }}</a>
-    {% if container.photo %}
-    <br /><img src="{{ container.photo.url }}" alt="{{ container.name }}" height="200">
-    {% endif %}
-</li>
-{% endfor %}
-{% else %}
-<p>No items in container</p>
-{% endif %}
-<h3>Stored in:</h3>
-{% if container.container %}
-<li>Container <a href="{% url 'inventory:container_detail' container.container.id %}">{{ container.container.name }}</a>
-</li>
-{% else %}
-<li>Not in a container</li>
-{% endif %}
-<br />
-<a href="{% url 'inventory:container_update' container.id %}">Edit Container</a>
-<br />
-<a href="{% url 'inventory:index' %}">Home</a>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Container: {{ container }}</h2>
+            <img src="{{ container.photo.url }}" alt="{{ container.name }}" height="200">
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col">
+            <h3>Contents:</h3>
+            {% if container.stored_items.first or container.stored_containers.first %}
+            <div class="card-columns ">
+                {% for item in container.stored_items.all %}
+                <div class="card">
+                    {% if item.photo %}
+                    <img class="card-img-top" src="{{ item.photo.url }}" alt="{{ item.name }}">
+                    {% else %}
+                    <img class="card-img-top"
+                        src="https://img.pngio.com/box-icon-png-411372-free-icons-library-box-icon-png-981_948.jpg"
+                        alt="item without photo">
+                    {% endif %}
+                    <div class="card-header"><a href="{% url 'inventory:item_detail' item.id %}">{{ item.name }}</a>
+                    </div>
+                </div>
+                {% endfor %}
+                {% for container in container.stored_containers.all %}
+                <div class="card">
+                    {% if container.photo %}
+                    <img class="card-img-top" src="{{ container.photo.url }}" alt="{{ container.name }}">
+                    {% else %}
+                    <img class="card-img-top"
+                        src="https://img.pngio.com/box-icon-png-411372-free-icons-library-box-icon-png-981_948.jpg"
+                        alt="container without photo">
+                    {% endif %}
+                    <div class="card-header"><a
+                            href="{% url 'inventory:container_detail' container.id %}">{{ container.name }}</a> </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>No items in container</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3>Stored in:</h3>
+            {% if container.container %}
+            <li>Container <a
+                    href="{% url 'inventory:container_detail' container.container.id %}">{{ container.container.name }}</a>
+            </li>
+            {% else %}
+            <li>Not in a container</li>
+            {% endif %}
+            <br />
+            <a href="{% url 'inventory:container_update' container.id %}">Edit Container</a>
+            <br />
+            <a href="{% url 'inventory:index' %}">Home</a>
+
+        </div>
+    </div>
+</div>
 {% endblock %}
