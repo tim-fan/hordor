@@ -44,10 +44,12 @@ class ItemUpdateView(generic.UpdateView):
     model = Item
     fields = ['name', 'photo', 'container']
     template_name = 'inventory/item_update.html'
-    success_url = reverse_lazy('inventory:index')
+    def get_success_url(self):
+        return reverse_lazy('inventory:item_detail', kwargs={'pk': self.kwargs['pk']})
 
 class ContainerUpdateView(generic.UpdateView):
     model = Container
     fields = ['name', 'photo', 'container']
     template_name = 'inventory/container_update.html'
-    success_url = reverse_lazy('inventory:index')
+    def get_success_url(self):
+        return reverse_lazy('inventory:container_detail', kwargs={'pk': self.kwargs['pk']})

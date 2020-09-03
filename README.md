@@ -16,9 +16,10 @@ python manage.py runserver
 ## ToDo
 
 * Object delete views
+  * see https://docs.djangoproject.com/en/3.1/ref/class-based-views/generic-editing/#django.views.generic.edit.DeleteView
+  * see http://www.learningaboutelectronics.com/Articles/How-to-create-a-delete-view-with-Python-in-Django.php
 * Compress images on save
   * try https://stackoverflow.com/questions/33077804/losslessly-compressing-images-on-django
-* update views return to detail view
 * Bootstrap styling on forms?
 * Handle case when item has no photo associated
 * Item storage history (dates of container change) 
