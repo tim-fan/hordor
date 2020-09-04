@@ -15,34 +15,7 @@
 
             {% include "inventory/components/item_list.html" with item_list=container.stored_items.all %}
             {% include "inventory/components/container_list.html" with container_list=container.stored_containers.all %}
-            <!-- <div class="card-columns ">
-                {% for item in container.stored_items.all %}
-                <div class="card">
-                    {% if item.photo %}
-                    <img class="card-img-top" src="{{ item.photo.url }}" alt="{{ item.name }}">
-                    {% else %}
-                    <img class="card-img-top"
-                        src="https://img.pngio.com/box-icon-png-411372-free-icons-library-box-icon-png-981_948.jpg"
-                        alt="item without photo">
-                    {% endif %}
-                    <div class="card-header"><a href="{% url 'inventory:item_detail' item.id %}">{{ item.name }}</a>
-                    </div>
-                </div>
-                {% endfor %}
-                {% for container in container.stored_containers.all %}
-                <div class="card">
-                    {% if container.photo %}
-                    <img class="card-img-top" src="{{ container.photo.url }}" alt="{{ container.name }}">
-                    {% else %}
-                    <img class="card-img-top"
-                        src="https://img.pngio.com/box-icon-png-411372-free-icons-library-box-icon-png-981_948.jpg"
-                        alt="container without photo">
-                    {% endif %}
-                    <div class="card-header"><a
-                            href="{% url 'inventory:container_detail' container.id %}">{{ container.name }}</a> </div>
-                </div>
-                {% endfor %}
-            </div> -->
+
             {% else %}
             <p>No items in container</p>
             {% endif %}

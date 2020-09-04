@@ -5,8 +5,11 @@
     <img src="{{ item.photo.url }}" alt="{{ item.name }}" height="400">
     <h3>Stored in:</h3>
     {% if item.container %}
-    <p>Container <a href="{% url 'inventory:container_detail' item.container.id %}">{{ item.container.name }}</a></p>
-    <img src="{{ item.container.photo.url }}" alt="{{ item.container.name }}" height="200">
+    <a href="{% url 'inventory:container_detail' item.container.id %}">
+        <p>Container: {{ item.container.name }}</p>
+        <img src="{{ item.container.photo.url }}" alt="{{ item.container.name }}" height="200">
+    </a>
+
     {% else %}
     <p>Not in a container</p>
     {% endif %}
