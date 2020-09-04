@@ -1,0 +1,24 @@
+{% if item_list %}
+<div class="container">
+    <div class="row">
+        <div class="card-columns">
+            {% for item in item_list %}
+            <div class="card">
+                <a href="{% url 'inventory:item_detail' item.id %}">
+                    {% if item.photo %}
+                    <img class="card-img-top" src="{{ item.photo.url }}" alt="{{ item.name }}">
+                    {% else %}
+                    <img class="card-img-top"
+                        src="https://img.pngio.com/box-icon-png-411372-free-icons-library-box-icon-png-981_948.jpg"
+                        alt="item without photo">
+                    {% endif %}
+                    <div class="card-header">{{ item.name }}</div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% else %}
+<p>No items</p>
+{% endif %}

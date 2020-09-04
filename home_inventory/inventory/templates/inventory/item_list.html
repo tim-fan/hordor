@@ -4,29 +4,10 @@
     <h1>Items</h1>
 </div>
 
-{% if item_list %}
 <div class="container">
     <div class="row">
-        <div class="card-columns" style="column-count: 4;">
-            {% for item in item_list %}
-            <div class="card">
-                {% if item.photo %}
-                <img class="card-img-top" src="{{ item.photo.url }}" alt="{{ item.name }}">
-                {% else %}
-                <img class="card-img-top"
-                    src="https://img.pngio.com/box-icon-png-411372-free-icons-library-box-icon-png-981_948.jpg"
-                    alt="item without photo">
-                {% endif %}
-                <div class="card-header"><a href="{% url 'inventory:item_detail' item.id %}">{{ item.name }}</a> </div>
-            </div>
-            {% endfor %}
-        </div>
+        {% include "inventory/components/item_list.html" %}
     </div>
 </div>
-{% else %}
-<p>No items in inventory.</p>
-{% endif %}
-<div class="container">
-    <a href="{% url 'inventory:new_item' %}">Create new item</a>
-</div>
+
 {% endblock %}

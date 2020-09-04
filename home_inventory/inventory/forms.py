@@ -18,3 +18,4 @@ class ContainerForm(forms.ModelForm):
         widgets = {
             'photo': forms.FileInput(attrs={'capture': 'environment'}),
         }
+    

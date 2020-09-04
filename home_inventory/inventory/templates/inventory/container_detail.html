@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col">
             <h2>Container: {{ container }}</h2>
-            <img src="{{ container.photo.url }}" alt="{{ container.name }}" height="200">
+            <img src="{{ container.photo.url }}" alt="{{ container.name }}" height="400">
         </div>
     </div>
 
@@ -12,7 +12,10 @@
         <div class="col">
             <h3>Contents:</h3>
             {% if container.stored_items.first or container.stored_containers.first %}
-            <div class="card-columns ">
+
+            {% include "inventory/components/item_list.html" with item_list=container.stored_items.all %}
+            {% include "inventory/components/container_list.html" with container_list=container.stored_containers.all %}
+            <!-- <div class="card-columns ">
                 {% for item in container.stored_items.all %}
                 <div class="card">
                     {% if item.photo %}
@@ -39,7 +42,7 @@
                             href="{% url 'inventory:container_detail' container.id %}">{{ container.name }}</a> </div>
                 </div>
                 {% endfor %}
-            </div>
+            </div> -->
             {% else %}
             <p>No items in container</p>
             {% endif %}

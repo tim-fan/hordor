@@ -1,16 +1,14 @@
 {% extends 'inventory/base.html' %}
 {% block content %}
-<h2>Containers</h2>
-{% if container_list %}
-<ul>
-    {% for container in container_list %}
-    <li><a href="{% url 'inventory:container_detail' container.id %}">{{ container.name }}</a></li>
-    {% endfor %}
-</ul>
-{% else %}
-<p>No Containers in inventory.</p>
-{% endif %}
+<div class="container">
+    <h1>Containers</h1>
 
-<a href="{% url 'inventory:new_item' %}">Create new item</a>
+</div>
+
+<div class="container">
+    <div class="row">
+        {% include "inventory/components/container_list.html" %}
+    </div>
+</div>
 
 {% endblock %}

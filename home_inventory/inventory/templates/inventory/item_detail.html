@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container">
     <h2>Item: {{ item.name }}</h2>
-    <img src="{{ item.photo.url }}" alt="{{ item.name }}" height="200">
+    <img src="{{ item.photo.url }}" alt="{{ item.name }}" height="400">
     <h3>Stored in:</h3>
     {% if item.container %}
     <p>Container <a href="{% url 'inventory:container_detail' item.container.id %}">{{ item.container.name }}</a></p>
