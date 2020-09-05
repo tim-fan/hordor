@@ -17,7 +17,6 @@ python manage.py runserver
 
 ## ToDo
 
-* Fix navbar expand on small screens
 * Item storage history (dates of container change) 
   * Try https://django-simple-history.readthedocs.io/en/latest/index.html
 * Table view with search
