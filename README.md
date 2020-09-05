@@ -2,6 +2,8 @@
 
 Django app for managing home inventory.
 
+<img src="doc/screenshot_containers.png" alt="docker icon" width="800"/>
+
 ## Run
 
 ```bash
@@ -15,7 +17,9 @@ python manage.py runserver
 
 ## ToDo
 
-* View containers as bootstap well,  or similar, showing contents inside the well
+* Item storage history (dates of container change) 
+  * Try https://django-simple-history.readthedocs.io/en/latest/index.html
+* Table view with search
 * Object delete views
   * see https://docs.djangoproject.com/en/3.1/ref/class-based-views/generic-editing/#django.views.generic.edit.DeleteView
   * see http://www.learningaboutelectronics.com/Articles/How-to-create-a-delete-view-with-Python-in-Django.php
@@ -27,8 +31,6 @@ python manage.py runserver
   `jpegoptim --size=100k media/images/*`
       * note size=100k give some pretty significant color distortion
 * Handle case when item has no photo associated in detail views
-* Item storage history (dates of container change) 
-  * Try https://django-simple-history.readthedocs.io/en/latest/index.html
 * Bulk-add objects to a container
 * Add fields
     * Item value
@@ -37,4 +39,7 @@ python manage.py runserver
     * something like https://codepen.io/dsheiko/pen/MvEpXm/
 * Item tags / categorisation
 * Handle multiple photos per object
+* Container detail view, items list - have a card with a '+', for 'add another'. Similar for adding containers
+* Fix item list in container card running over card boundary
+* Host a live example site somewhere/somehow
 

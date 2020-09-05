@@ -4,38 +4,10 @@
     <h1>Containers</h1>
 </div>
 
-<div class="container" id="accordion">
+<div class="container pb-4">
     {% if container_list %}
     {% for container in container_list %}
-    <div class="card">
-        <!-- <img class="card-img-top w-25" src="{{ container.photo.url }}" alt="{{ container.name }}" /> -->
-        <div class="card-header" id="container-header-{{ container.pk }}">
-            <h5 class="mb-0">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#container-body-{{ container.pk }}"
-                    aria-expanded="true" aria-controls="container-body-{{ container.pk }}">
-                    {{ container.name }}
-                </button>
-            </h5>
-        </div>
-
-        <div id="container-body-{{ container.pk }}" class="collapse"
-            aria-labelledby="container-header-{{ container.pk }}" data-parent="#accordion">
-            <div class="card-body">
-                <h3>Contents:</h3>
-                {% if container.stored_items.first or container.stored_containers.first %}
-
-                <h5>Items:</h5>
-                {% include "inventory/components/item_list.html" with item_list=container.stored_items.all %}
-                <h5>Containers:</h5>
-                {% include "inventory/components/container_list.html" with container_list=container.stored_containers.all %}
-
-                {% else %}
-                <p>No items in container</p>
-                {% endif %}
-            </div>
-        </div>
-
-    </div>
+    {% include "inventory/components/container_with_contents_card.html" %}
     {% endfor %}
     {% else %}
     <p>No containers</p>
