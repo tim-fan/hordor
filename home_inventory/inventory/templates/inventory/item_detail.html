@@ -1,22 +1,29 @@
 {% extends 'inventory/base.html' %}
 {% block content %}
 <div class="container">
-    <h2>Item: {{ item.name }}</h2>
-    <img src="{{ item.photo.url }}" alt="{{ item.name }}" height="400">
-    <h3>Stored in:</h3>
-    {% if item.container %}
-    <a href="{% url 'inventory:container_detail' item.container.id %}">
-        <p>Container: {{ item.container.name }}</p>
-        <img src="{{ item.container.photo.url }}" alt="{{ item.container.name }}" height="200">
-    </a>
+    <div class="row">
+        <div class="col-12">
+            <h2>Item: {{ item.name }}</h2>
+            <img src="{{ item.photo.url }}" alt="{{ item.name }}" height="400">
+        </div>
+    </div>
+    <div class="row pt-4">
+        <div class="col-4">
+            <h3>Stored in:</h3>
+            {% if item.container %}
+            {% include "inventory/components/container_card.html" with container=item.container%}
+            {% else %}
+            <p>Not in a container</p>
+            {% endif %}
+        </div>
+    </div>
 
-    {% else %}
-    <p>Not in a container</p>
-    {% endif %}
-    <br />
-    <br />
-    <a href="{% url 'inventory:item_update' item.id %}">Edit item</a>
-    <br />
-    <a href="{% url 'inventory:index' %}">Home</a>
+    <div class="row pt-4">
+        <a href="{% url 'inventory:item_update' item.id %}">Edit item</a>
+    </div>
+
+    <div class="row pt-2">
+        <a href="{% url 'inventory:index' %}">Home</a>
+    </div>
 </div>
 {% endblock %}

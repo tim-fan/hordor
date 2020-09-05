@@ -1,0 +1,12 @@
+<div class="card">
+    <a href="{% url 'inventory:container_detail' container.id %}">
+        {% if container.photo %}
+        <img class="card-img-top" src="{{ container.photo.url }}" alt="{{ container.name }}">
+        {% else %}
+        <img class="card-img-top"
+            src="https://img.pngio.com/box-icon-png-411372-free-icons-library-box-icon-png-981_948.jpg"
+            alt="container without photo">
+        {% endif %}
+        <div class="card-header">{{ container.name }}</div>
+    </a>
+</div>

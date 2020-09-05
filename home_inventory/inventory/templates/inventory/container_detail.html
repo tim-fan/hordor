@@ -13,7 +13,9 @@
             <h3>Contents:</h3>
             {% if container.stored_items.first or container.stored_containers.first %}
 
+            <h5>Items:</h5>
             {% include "inventory/components/item_list.html" with item_list=container.stored_items.all %}
+            <h5>Containers:</h5>
             {% include "inventory/components/container_list.html" with container_list=container.stored_containers.all %}
 
             {% else %}
