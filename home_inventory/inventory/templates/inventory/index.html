@@ -1,8 +1,8 @@
 {% extends 'inventory/base.html' %}
 {% block content %}
 
-<div class="container">
-    <h1>Home Inventory</h1>
+<div class="container pb-4 pt-4">
+    <h1 class="pb-4">Home Inventory</h1>
 
     <a href="{% url 'inventory:new_item' %}">Create new item</a><br />
     <a href="{% url 'inventory:new_container' %}">Create new container</a>
