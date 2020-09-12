@@ -60,7 +60,7 @@ class NewContainerView(generic.CreateView):
 
 class ItemUpdateView(generic.UpdateView):
     model = Item
-    fields = ['name', 'photo', 'container']
+    fields = ['name', 'description', 'photo', 'container']
     template_name = 'inventory/item_update.html'
 
     def get_success_url(self):
@@ -70,7 +70,7 @@ class ItemUpdateView(generic.UpdateView):
 
 class ContainerUpdateView(generic.UpdateView):
     model = Container
-    fields = ['name', 'photo', 'container']
+    fields = ['name', 'description', 'photo', 'container']
     template_name = 'inventory/container_update.html'
 
     def get_success_url(self):
