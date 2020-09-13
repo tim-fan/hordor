@@ -3,6 +3,11 @@ from .models import Item, Container
 
 
 class ItemForm(forms.ModelForm):
+
+    container = forms.ModelChoiceField(
+        empty_label="None",
+        queryset=Container.objects.order_by('-creation_date'))
+
     class Meta:
         model = Item
         fields = ['name', 'description', 'photo', 'container']
@@ -21,6 +26,11 @@ class ItemForm(forms.ModelForm):
 
 
 class ContainerForm(forms.ModelForm):
+
+    container = forms.ModelChoiceField(
+        empty_label="None",
+        queryset=Container.objects.order_by('-creation_date'))
+
     class Meta:
         model = Container
         fields = ['name', 'description', 'photo', 'container']

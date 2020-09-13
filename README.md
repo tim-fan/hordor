@@ -17,7 +17,7 @@ python manage.py runserver
 
 ## ToDo
 * Add new item/container from navbar
-* 
+* Rename project home_inventory -> hordor
 * Item storage history (dates of container change) 
   * Try https://django-simple-history.readthedocs.io/en/latest/index.html
 * Table view with search
@@ -29,7 +29,7 @@ python manage.py runserver
   * better to keep separate thumbnails and full-res images?
     * refer https://code.djangoproject.com/wiki/ThumbNails
   * Note, until this is implemented, can periodically run this to keep files small:
-  `jpegoptim --size=100k media/images/*`
+  `jpegoptim --size=1000k media/images/*`
       * note size=100k give some pretty significant color distortion
 * Handle case when item has no photo associated in detail views
 * Bulk-add objects to a container
