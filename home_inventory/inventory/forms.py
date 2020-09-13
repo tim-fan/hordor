@@ -8,7 +8,15 @@ class ItemForm(forms.ModelForm):
         fields = ['name', 'description', 'photo', 'container']
 
         widgets = {
-            'photo': forms.FileInput(attrs={'capture': 'environment'}),
+            'name':
+            forms.TextInput(attrs={'class': 'form-control'}),
+            'description':
+            forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3
+            }),
+            'photo':
+            forms.FileInput(attrs={'capture': 'camera'}),
         }
 
 
@@ -18,5 +26,13 @@ class ContainerForm(forms.ModelForm):
         fields = ['name', 'description', 'photo', 'container']
 
         widgets = {
-            'photo': forms.FileInput(attrs={'capture': 'environment'}),
+            'name':
+            forms.TextInput(attrs={'class': 'form-control'}),
+            'description':
+            forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3
+            }),
+            'photo':
+            forms.FileInput(attrs={'capture': 'camera'}),
         }

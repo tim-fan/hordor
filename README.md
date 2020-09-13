@@ -16,7 +16,8 @@ python manage.py runserver
 (Use with vscode Remote-Containers extension)
 
 ## ToDo
-
+* Add new item/container from navbar
+* 
 * Item storage history (dates of container change) 
   * Try https://django-simple-history.readthedocs.io/en/latest/index.html
 * Table view with search
@@ -32,9 +33,13 @@ python manage.py runserver
       * note size=100k give some pretty significant color distortion
 * Handle case when item has no photo associated in detail views
 * Bulk-add objects to a container
+  * link from container detail - add item to container (could be the card mentioned below)
+    * links to an item add with container pre-selected
+      * related:
+        * https://stackoverflow.com/questions/56708513/how-to-prefill-form-with-url-parameters-django
+
 * Add fields
     * Item value
-    * Description
 * Add container forest view
     * something like https://codepen.io/dsheiko/pen/MvEpXm/
 * Item tags / categorisation
