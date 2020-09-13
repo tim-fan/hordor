@@ -17,6 +17,7 @@ python manage.py runserver
 
 ## ToDo
 * Rename project home_inventory -> hordor
+* Item and container counts on home page
 * Don't show everything on home page or in lists (paginate?)
 * Item storage history (dates of container change) 
   * Try https://django-simple-history.readthedocs.io/en/latest/index.html

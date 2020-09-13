@@ -5,6 +5,7 @@ from .models import Item, Container
 class ItemForm(forms.ModelForm):
 
     container = forms.ModelChoiceField(
+        required=False,
         empty_label="None",
         queryset=Container.objects.order_by('-creation_date'))
 
@@ -28,6 +29,7 @@ class ItemForm(forms.ModelForm):
 class ContainerForm(forms.ModelForm):
 
     container = forms.ModelChoiceField(
+        required=False,
         empty_label="None",
         queryset=Container.objects.order_by('-creation_date'))
 
