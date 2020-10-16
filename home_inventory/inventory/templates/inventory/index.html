@@ -3,8 +3,9 @@
 
 <div class="container pt-4">
     <div class="row">
-        <h2>Items</h2>
+        <h2>Latest Items</h2>
         {% include "inventory/components/item_list.html" %}
+        <a href="{% url 'inventory:item_list' %}">All items</a>
     </div>
     <div class="row">
         <h2>Containers</h2>

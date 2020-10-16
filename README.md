@@ -29,7 +29,7 @@ python manage.py runserver
   * try https://stackoverflow.com/questions/33077804/losslessly-compressing-images-on-django
   * better to keep separate thumbnails and full-res images?
     * refer https://code.djangoproject.com/wiki/ThumbNails
-  * Note, until this is implemented, can periodically run this to keep files small:
+  * Note, until this is implemented, can periodically run this in crontab to keep files small:
   `jpegoptim --size=1000k media/images/*`
       * note size=100k give some pretty significant color distortion
 * Handle case when item has no photo associated in detail views

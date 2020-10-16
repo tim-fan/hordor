@@ -7,7 +7,7 @@ from .forms import ItemForm, ContainerForm
 
 
 def index(request):
-    item_list = Item.objects.order_by('-creation_date')
+    item_list = Item.objects.order_by('-creation_date')[:10]
     container_list = Container.objects.order_by('-creation_date')
     context = {
         'item_list': item_list,
@@ -21,6 +21,8 @@ class ItemDetailView(generic.DetailView):
 
 
 class ItemListView(generic.ListView):
+    paginate_by = 20
+
     def get_queryset(self):
         return Item.objects.order_by('-creation_date')
 
