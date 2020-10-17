@@ -16,12 +16,12 @@ python manage.py runserver
 (Use with vscode Remote-Containers extension)
 
 ## ToDo
+
+* Include containers in table view
+* authentication
 * Rename project home_inventory -> hordor
-* Item and container counts on home page
-* Don't show everything on home page or in lists (paginate?)
 * Item storage history (dates of container change) 
   * Try https://django-simple-history.readthedocs.io/en/latest/index.html
-* Table view with search
 * Object delete views
   * see https://docs.djangoproject.com/en/3.1/ref/class-based-views/generic-editing/#django.views.generic.edit.DeleteView
   * see http://www.learningaboutelectronics.com/Articles/How-to-create-a-delete-view-with-Python-in-Django.php
@@ -32,6 +32,7 @@ python manage.py runserver
   * Note, until this is implemented, can periodically run this in crontab to keep files small:
   `jpegoptim --size=1000k media/images/*`
       * note size=100k give some pretty significant color distortion
+* Item and container counts on home page
 * Handle case when item has no photo associated in detail views
 * Bulk-add objects to a container
   * link from container detail - add item to container (could be the card mentioned below)
@@ -41,6 +42,7 @@ python manage.py runserver
 
 * Add fields
     * Item value
+    * Owner
 * Add container forest view
     * something like https://codepen.io/dsheiko/pen/MvEpXm/
 * Item tags / categorisation
