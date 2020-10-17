@@ -10,6 +10,7 @@ urlpatterns = [
          views.ItemUpdateView.as_view(),
          name='item_update'),
     path('item/list/', views.ItemListView.as_view(), name='item_list'),
+    path('item/table/', views.ItemTableView.as_view(), name='item_table'),
     path('item/new/', views.NewItemView.as_view(), name='new_item'),
     path('<int:pk>/container',
          views.ContainerDetailView.as_view(),

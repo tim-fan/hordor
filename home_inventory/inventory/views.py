@@ -27,6 +27,13 @@ class ItemListView(generic.ListView):
         return Item.objects.order_by('-creation_date')
 
 
+class ItemTableView(generic.ListView):
+    template_name = "inventory/item_table.html"
+
+    def get_queryset(self):
+        return Item.objects.order_by('-creation_date')
+
+
 class ContainerDetailView(generic.DetailView):
     model = Container
 
