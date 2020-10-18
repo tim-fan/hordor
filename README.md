@@ -1,4 +1,4 @@
-# Home Inventory
+# Hordor
 
 Django app for managing home inventory.
 
@@ -18,8 +18,6 @@ python manage.py runserver
 ## ToDo
 
 * Include containers in table view
-* authentication
-* Rename project home_inventory -> hordor
 * Item storage history (dates of container change) 
   * Try https://django-simple-history.readthedocs.io/en/latest/index.html
 * Object delete views
