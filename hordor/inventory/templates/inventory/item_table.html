@@ -10,41 +10,46 @@
 
 <div class="container">
     <div class="row pl-3">
-        <table id="item_table" class="display">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Container</th>
-                    <th>Creation date</th>
-                    <th>Photo</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in item_list %}
-                <tr>
-                    <td><a href="{% url 'inventory:item_detail' item.id %}">{{ item.name }}</a></td>
-                    <td>
-                        {% if item.container %}
-                        <a href="{% url 'inventory:container_detail' item.container.id %}">{{ item.container.name }}</a>
-                        {% else %}
-                        None
-                        {% endif %}
-                    </td>
-                    <td>{{ item.creation_date }}</td>
-                    <td>
-                        <a href="{% url 'inventory:item_detail' item.id %}">
-                            {% if item.photo %}
-                            <img src="{{ item.photo.url }}" alt="{{ item.name }}" height="150" />
+        <div class="col-sm-12">
+
+
+            <table id="item_table" class="display">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Container</th>
+                        <th>Creation date</th>
+                        <th>Photo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in item_list %}
+                    <tr>
+                        <td><a href="{% url 'inventory:item_detail' item.id %}">{{ item.name }}</a></td>
+                        <td>
+                            {% if item.container %}
+                            <a
+                                href="{% url 'inventory:container_detail' item.container.id %}">{{ item.container.name }}</a>
                             {% else %}
-                            <img src="https://img.pngio.com/box-icon-png-411372-free-icons-library-box-icon-png-981_948.jpg"
-                                alt="item without photo">
+                            None
                             {% endif %}
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        </td>
+                        <td>{{ item.creation_date }}</td>
+                        <td>
+                            <a href="{% url 'inventory:item_detail' item.id %}">
+                                {% if item.photo %}
+                                <img src="{{ item.photo.url }}" alt="{{ item.name }}" width="150" />
+                                {% else %}
+                                <img src="https://img.pngio.com/box-icon-png-411372-free-icons-library-box-icon-png-981_948.jpg"
+                                    alt="item without photo" width="150">
+                                {% endif %}
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
