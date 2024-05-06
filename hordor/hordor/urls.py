@@ -14,15 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
-from django.conf.urls import url
 
 from . import views
 
 urlpatterns = [
-    url(r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:], views.protected_serve,
+    re_path(r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:], views.protected_serve,
         {'document_root': settings.MEDIA_ROOT}),
     path('inventory/', include('inventory.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
