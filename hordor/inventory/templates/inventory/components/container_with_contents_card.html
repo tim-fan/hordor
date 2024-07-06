@@ -5,7 +5,9 @@
                 data-target="#container-body-{{ container.pk }}" aria-expanded="true"
                 aria-controls="container-body-{{ container.pk }}">
                 <i class="fa" aria-hidden="true"></i>
-                <!-- <img src="{{ container.photo.url }}" alt="{{ container.name }}" height="100" /> -->
+                {% if container.photo %}
+                <img src="{{ container.photo.url }}" alt="{{ container.name }}" height="100" />
+                {% endif %}
                 {{ container.name }}
             </button>
         </h5>
