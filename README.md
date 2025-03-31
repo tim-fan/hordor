@@ -15,6 +15,18 @@ python manage.py runserver
 
 (Use with vscode Remote-Containers extension)
 
+## ToDo 2025 update
+
+* optimise current workflow
+  * store item
+    * find existing -> store
+    * create new -> store
+  * retreive item
+    * find -> remove from container
+  * view object movement history
+  * some report about objects that never move
+  * LLM enrichment of db, object queries
+
 ## ToDo
 
 * Include containers in table view
