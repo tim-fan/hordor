@@ -4,7 +4,9 @@
     <div class="row">
         <div class="col">
             <h2 class="pb-3">Container: {{ container }}</h2>
-            <img src="{{ container.photo.url }}" alt="{{ container.name }}" height="400">
+            {% if container.photo %}
+            <img src="{{ container.photo.url }}" alt="{{ container.name }}" height="400" />
+            {% endif %}
         </div>
     </div>
 
