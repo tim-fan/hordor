@@ -2,7 +2,8 @@
 
 Django app for managing home inventory.
 
-<img src="doc/screenshot_containers.png" alt="docker icon" width="800"/>
+https://github.com/user-attachments/assets/ffd0a4d7-be93-4b63-942e-b3b139054b2d
+
 
 ## Run
 
