@@ -27,7 +27,14 @@
     </div>
 
     <div class="row pt-4">
-        <a href="{% url 'inventory:item_update' item.id %}">Edit item</a>
+        <div class="col-12">
+            {% if item.can_be_stored %}
+            <a href="{% url 'inventory:store_item' item.id %}" class="btn btn-primary">Store Item</a>
+            {% elif item.can_be_retrieved %}
+            <a href="{% url 'inventory:retrieve_item' item.id %}" class="btn btn-warning">Retrieve Item</a>
+            {% endif %}
+            <a href="{% url 'inventory:item_update' item.id %}" class="btn btn-secondary">Edit item</a>
+        </div>
     </div>
 
 </div>

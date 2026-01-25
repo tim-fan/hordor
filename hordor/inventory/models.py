@@ -26,23 +26,52 @@ class Container(GenericObject):
 
 class Item(GenericObject):
 
+    def can_be_stored(self):
+        """Returns True if item can be stored (not in container and not dispossessed)"""
+        if self.container:
+            return False
+        # Check if item is dispossessed (stored in "Dispossessed" container)
+        # For now, just check if container is None
+        return True
+    
+    def can_be_retrieved(self):
+        """Returns True if item can be retrieved (is in a container and not dispossessed)"""
+        if not self.container:
+            return False
+        # Check if container is "Dispossessed" 
+        if self.container.name and self.container.name.lower() == "dispossessed":
+            return False
+        return True
+    
+    def is_dispossessed(self):
+        """Returns True if item is in the Dispossessed container"""
+        if self.container and self.container.name and self.container.name.lower() == "dispossessed":
+            return True
+        return False
+
     def save(self, *args, **kwargs):
         # if moved container, create ItemMovement record
-        add_movement_record = False
+        is_new_item = False
+        is_moved_item = False
+
         if not self.pk:
             # new item - add a movement into the current container
-            add_movement_record = True
+            is_new_item = True
         else:
             # existing item - only add movement if container changed
             original = Item.objects.get(pk=self.pk)
-            add_movement_record = original.container != self.container
+            is_moved_item = original.container != self.container
 
-        if add_movement_record:
+        # save self before the movement record
+        # Prevent exception when item is new
+        super().save(*args, **kwargs)
+        if is_new_item or is_moved_item:
             ItemMovement.objects.create(
                 item=self,
-                to_container=self.container
+                to_container=self.container,
+                is_new_item=is_new_item,
             )
-        super().save(*args, **kwargs)
+        
 
 
 class ItemMovement(models.Model):
@@ -52,6 +81,16 @@ class ItemMovement(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     to_container = models.ForeignKey(Container, on_delete=models.SET_NULL, null=True, blank=True, related_name='moved_to')
     moved_at = models.DateTimeField(default=timezone.now)
+    is_new_item = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.item.name} moved to {self.to_container} at {self.moved_at}"
+        if self.is_new_item:
+            if not self.to_container:
+                return f"New item {self.item.name} created, not stored in container at {self.moved_at}"
+            else:
+                return f"New item {self.item.name} stored in {self.to_container} at {self.moved_at}"
+        else:
+            if not self.to_container:
+                return f"{self.item.name} removed from container at {self.moved_at}"
+            else:
+                return f"{self.item.name} moved to {self.to_container} at {self.moved_at}"

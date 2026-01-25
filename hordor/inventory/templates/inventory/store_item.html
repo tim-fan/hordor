@@ -1,0 +1,31 @@
+{% extends 'inventory/base.html' %}
+{% block content %}
+<div class="container pt-3">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="pb-3">Store Item: {{ item.name }}</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {% if item.photo %}
+            <img src="{{ item.photo.url }}" alt="{{ item.name }}" class="img-fluid" style="max-height: 300px;">
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <div class="alert alert-info">
+                <h3>Instructions:</h3>
+                <p class="lead">Put this item in <strong>{{ bag.name }}</strong></p>
+                <p>Once you have physically placed the item in {{ bag.name }}, click the confirm button below.</p>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary btn-lg">Confirm Item Stored</button>
+                <a href="{% url 'inventory:item_detail' item.id %}" class="btn btn-secondary btn-lg">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

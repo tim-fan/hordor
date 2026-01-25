@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from inventory.models import Container
+from inventory.models import Container, Item
 
 """
 DANGER!
@@ -29,11 +29,13 @@ class Command(BaseCommand):
         # for item in Item.objects.all():
         #     print(item)
         #     print(item.container)
-        uk_container = Container.objects.get(name="UK")
+        uk = Container.objects.get(name="UK")
         # move all containers to UK
         for container in Container.objects.all():
-            print(container.container)
-            if container != uk_container:
-                container.container = uk_container
+            # print(container.container)
+            if container.container == uk:
+                # item.container = uk_container
+                container.delete()
+                print(f"delete {container}")
                 # container.save()
                 

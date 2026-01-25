@@ -4,7 +4,9 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#item_table').DataTable();
+        $('#item_table').DataTable({
+            "pageLength": 100  // Show 100 items by default
+        });
     });
 </script>
 

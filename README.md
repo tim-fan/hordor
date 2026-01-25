@@ -27,6 +27,8 @@ python manage.py runserver
   * view object movement history
   * some report about objects that never move
   * LLM enrichment of db, object queries
+  * better support for "dispossessed" - add as an item attribute, rather than storing in the dispossed container?
+  * better support for numbered bags - don't parse item names to determine if it is a bag, and what it's number is
 
 ## ToDo
 

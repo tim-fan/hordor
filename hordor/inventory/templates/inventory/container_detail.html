@@ -18,7 +18,7 @@
             <h5>Items:</h5>
             {% include "inventory/components/item_list.html" with item_list=container.stored_items.all %}
             <h5>Containers:</h5>
-            {% include "inventory/components/container_list.html" with container_list=container.stored_containers.all %}
+            {% include "inventory/components/container_list.html" with container_list=container.stored_containers.all|dictsort:"creation_date" %}
 
             {% else %}
             <p>No items in container</p>
