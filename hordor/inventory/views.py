@@ -64,7 +64,13 @@ class ItemTableView(LoginRequiredMixin, generic.ListView):
     template_name = "inventory/item_table.html"
 
     def get_queryset(self):
-        return Item.objects.order_by('-creation_date')
+        # Exclude items in "Dispossessed" container
+        try:
+            dispossessed = Container.objects.get(name__iexact="dispossessed")
+            return Item.objects.exclude(container=dispossessed).order_by('-creation_date')
+        except Container.DoesNotExist:
+            # If no Dispossessed container exists, return all items
+            return Item.objects.order_by('-creation_date')
 
 
 class ContainerDetailView(LoginRequiredMixin, generic.DetailView):
