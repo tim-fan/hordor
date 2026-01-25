@@ -1,26 +1,133 @@
 {% extends 'inventory/base.html' %}
 {% block content %}
 
+<style>
+    /* Hide table until DataTables is initialized to prevent flash */
+    #item_table {
+        display: none;
+    }
+    
+    /* Allow rows to grow for images */
+    #item_table td {
+        vertical-align: middle;
+    }
+    
+    #item_table img {
+        max-height: 30vh;  /* Allow images up to 30% of viewport height */
+        max-width: 100%;
+        width: auto;
+        height: auto;
+    }
+    
+    /* Prevent layout shift - reserve space for search box */
+    .dataTables_filter {
+        min-height: 38px;
+        margin-bottom: 1rem;
+    }
+    
+    /* Prevent horizontal scroll */
+    .container-fluid {
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+    
+    /* Mobile-friendly table styling */
+    @media (max-width: 768px) {
+        #item_table {
+            font-size: 0.85rem;
+        }
+        #item_table img {
+            max-height: 25vh;  /* Slightly smaller on mobile */
+        }
+    }
+    
+    /* Ensure table is responsive */
+    #item_table.dataTable {
+        width: 100% !important;
+        table-layout: fixed;
+        display: table !important;  /* Show after DataTables initializes */
+    }
+    
+    /* Prevent word wrapping in name column */
+    #item_table td:nth-child(1) {
+        word-wrap: break-word;
+    }
+    
+    /* Move length menu to bottom */
+    .dataTables_length {
+        display: none;
+    }
+    
+    /* Custom info display */
+    .dataTables_info {
+        padding-top: 0.5em;
+    }
+    
+    /* Hide date and description columns on mobile */
+    @media (max-width: 768px) {
+        #item_table th.desktop-only,
+        #item_table td.desktop-only {
+            display: none;
+        }
+    }
+    
+    /* Truncate description text */
+    .description-cell {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
 
 <script type="text/javascript">
     $(document).ready(function () {
+        // Check if we're on mobile
+        var isMobile = window.innerWidth <= 768;
+        
+        var columnDefs;
+        if (isMobile) {
+            // Mobile: hide date and description
+            columnDefs = [
+                { "width": "35%", "targets": 0 },  // Name
+                { "width": "25%", "targets": 1 },  // Container
+                { "visible": false, "targets": 2 },  // Date - hidden but sortable
+                { "visible": false, "targets": 3 },  // Description - hidden
+                { "width": "40%", "targets": 4 }   // Photo
+            ];
+        } else {
+            // Desktop: show all columns
+            columnDefs = [
+                { "width": "20%", "targets": 0 },  // Name
+                { "width": "15%", "targets": 1 },  // Container
+                { "width": "10%", "targets": 2 },  // Date - visible
+                { "width": "25%", "targets": 3 },  // Description - visible
+                { "width": "30%", "targets": 4 }   // Photo
+            ];
+        }
+        
         $('#item_table').DataTable({
-            "pageLength": 100  // Show 100 items by default
+            "pageLength": 100,  // Show 100 items by default
+            "responsive": false,  // Disable responsive to maintain fixed columns
+            "autoWidth": false,
+            "scrollX": false,
+            "order": [[2, "desc"]],  // Sort by date column (index 2), most recent first
+            "dom": '<"top"f>rt<"bottom"lip><"clear">',  // Move length menu to bottom
+            "columnDefs": columnDefs
         });
     });
 </script>
 
-<div class="container">
-    <div class="row pl-3">
-        <div class="col-sm-12">
-
-
-            <table id="item_table" class="display">
+<div class="container-fluid px-2 px-md-3">
+    <div class="row">
+        <div class="col-12">
+            <table id="item_table" class="table table-striped table-sm">
                 <thead>
                     <tr>
                         <th>Name</th>
                         <th>Container</th>
-                        <th>Creation date</th>
+                        <th class="desktop-only">Date</th>
+                        <th class="desktop-only">Description</th>
                         <th>Photo</th>
                     </tr>
                 </thead>
@@ -30,20 +137,19 @@
                         <td><a href="{% url 'inventory:item_detail' item.id %}">{{ item.name }}</a></td>
                         <td>
                             {% if item.container %}
-                            <a
-                                href="{% url 'inventory:container_detail' item.container.id %}">{{ item.container.name }}</a>
+                            <a href="{% url 'inventory:container_detail' item.container.id %}">{{ item.container.name }}</a>
                             {% else %}
                             None
                             {% endif %}
                         </td>
-                        <td>{{ item.creation_date }}</td>
+                        <td class="desktop-only">{{ item.creation_date|date:"Y-m-d" }}</td>
+                        <td class="desktop-only description-cell">{{ item.description|truncatewords:10 }}</td>
                         <td>
                             <a href="{% url 'inventory:item_detail' item.id %}">
                                 {% if item.photo %}
-                                <img src="{{ item.photo.url }}" alt="{{ item.name }}" width="150" />
+                                <img src="{{ item.photo.url }}" alt="{{ item.name }}" />
                                 {% else %}
-                                <img src="https://img.pngio.com/box-icon-png-411372-free-icons-library-box-icon-png-981_948.jpg"
-                                    alt="item without photo" width="150">
+                                <span class="text-muted">No photo</span>
                                 {% endif %}
                             </a>
                         </td>
@@ -56,9 +162,3 @@
 </div>
 
 {% endblock %}
-
-<!-- <td> {% include "inventory/components/item_card.html" %}
-                    </td> -->
-<!-- <td>insert photo here</td> -->
-<!-- <td><img src="{{ item.photo.url }}" alt="{{ item.name }}" />
-                    </td> -->

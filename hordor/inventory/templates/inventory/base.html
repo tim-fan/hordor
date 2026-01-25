@@ -33,6 +33,32 @@
     <title>Hordor</title>
 
     <style>
+        /* Ensure navbar doesn't overflow on mobile */
+        .navbar {
+            padding: 0.5rem 1rem;
+        }
+        
+        .navbar-brand {
+            font-size: 1.25rem;
+        }
+        
+        /* Prevent horizontal scroll */
+        body {
+            overflow-x: hidden;
+        }
+        
+        html, body {
+            max-width: 100%;
+        }
+        
+        /* Make container-fluid truly fluid on mobile */
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
+        }
+        
         @media (min-width: 100px) {
             .card-columns {
                 column-count: 2;
