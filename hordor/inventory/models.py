@@ -4,6 +4,8 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils import timezone
 
+from .imaging import as_jpg_name, compress_image_file
+
 
 class GenericObject(models.Model):
     name = models.CharField(max_length=200)
@@ -37,6 +39,12 @@ class Container(GenericObject):
                 )
             seen.add(ancestor.pk)
             ancestor = ancestor.container
+
+    def save(self, *args, **kwargs):
+        if self.photo and not self.photo._committed:
+            compressed = compress_image_file(self.photo)
+            self.photo.save(as_jpg_name(self.photo.name), compressed, save=False)
+        super().save(*args, **kwargs)
 
 
 class Item(GenericObject):
@@ -101,6 +109,12 @@ class ItemPhoto(models.Model):
 
     def __str__(self):
         return f"Photo for {self.item.name}"
+
+    def save(self, *args, **kwargs):
+        if self.image and not self.image._committed:
+            compressed = compress_image_file(self.image)
+            self.image.save(as_jpg_name(self.image.name), compressed, save=False)
+        super().save(*args, **kwargs)
 
 
 @receiver(post_delete, sender=ItemPhoto)
