@@ -37,3 +37,28 @@ def as_jpg_name(name):
     if ext.lower() in ('.jpg', '.jpeg'):
         return name
     return base + '.jpg'
+
+
+def rotate_image_field(field_file, degrees=-90):
+    """
+    Rotate an already-saved ImageField file in place (default: 90
+    degrees clockwise) and re-save it as JPEG. Writes under a fresh
+    filename (old file is only deleted after the new one is written)
+    so the URL changes and browsers won't serve a stale cached copy
+    of the old orientation, then deletes the old file.
+
+    Does not save the owning model instance -- call instance.save()
+    with the relevant field afterwards.
+    """
+    old_name = field_file.name
+    field_file.open('rb')
+    img = Image.open(field_file)
+    img.load()
+    field_file.close()
+
+    rotated = img.rotate(degrees, expand=True)
+    buffer = BytesIO()
+    rotated.save(buffer, format='JPEG', quality=JPEG_QUALITY, optimize=True)
+
+    field_file.save(os.path.basename(as_jpg_name(old_name)), ContentFile(buffer.getvalue()), save=False)
+    field_file.storage.delete(old_name)

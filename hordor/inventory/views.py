@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.views.decorators.http import require_POST
+from .imaging import rotate_image_field
 from .models import Item, Container, ItemPhoto
 from .forms import ItemForm, ContainerForm
 import re
@@ -297,3 +298,15 @@ def delete_item_photo_view(request, photo_pk):
     item_pk = photo.item_id
     photo.delete()
     return redirect('inventory:item_update', pk=item_pk)
+
+
+@login_required
+@require_POST
+def rotate_item_photo_view(request, photo_pk):
+    """
+    Rotate a photo 90 degrees clockwise, rewriting the file in place.
+    """
+    photo = get_object_or_404(ItemPhoto, pk=photo_pk)
+    rotate_image_field(photo.image, degrees=-90)
+    photo.save(update_fields=['image'])
+    return redirect('inventory:item_update', pk=photo.item_id)

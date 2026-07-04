@@ -16,6 +16,7 @@ urlpatterns = [
     path('<int:pk>/item/photos/add', views.add_item_photos_view, name='add_item_photos'),
     path('photo/<int:photo_pk>/set_main', views.set_main_item_photo_view, name='set_main_item_photo'),
     path('photo/<int:photo_pk>/delete', views.delete_item_photo_view, name='delete_item_photo'),
+    path('photo/<int:photo_pk>/rotate', views.rotate_item_photo_view, name='rotate_item_photo'),
     path('item/list/', views.ItemListView.as_view(), name='item_list'),
     path('item/table/', views.ItemTableView.as_view(), name='item_table'),
     path('item/new/', views.NewItemView.as_view(), name='new_item'),

@@ -30,8 +30,12 @@
                 <button type="submit" class="btn btn-sm btn-secondary">Set as main</button>
               </form>
               {% endif %}
+              <form method="post" action="{% url 'inventory:rotate_item_photo' photo.pk %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-secondary mt-1">&#8635; Rotate</button>
+              </form>
               <form method="post" action="{% url 'inventory:delete_item_photo' photo.pk %}"
-                    onsubmit="return confirm('Delete this photo?');">
+                    onsubmit="return confirm('Delete this photo?');" class="d-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-sm btn-danger mt-1">Delete</button>
               </form>
