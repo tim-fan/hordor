@@ -1,9 +1,21 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
 
 from .models import Item, Container
 
 class ItemAndContainerModelTests(TestCase):
+
+    def test_container_cannot_contain_itself(self):
+        c1 = Container.objects.create(name="c1")
+        c1.container = c1
+        self.assertRaises(ValidationError, c1.full_clean)
+
+    def test_container_cycle_is_rejected(self):
+        c1 = Container.objects.create(name="c1")
+        c2 = Container.objects.create(name="c2", container=c1)
+        c1.container = c2
+        self.assertRaises(ValidationError, c1.full_clean)
 
     def test_add_contents(self):
         """

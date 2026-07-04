@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
@@ -21,7 +22,19 @@ class GenericObject(models.Model):
 
 
 class Container(GenericObject):
-    pass
+
+    def clean(self):
+        super().clean()
+        seen = {self.pk} if self.pk is not None else set()
+        ancestor = self.container
+        while ancestor is not None:
+            if ancestor.pk in seen:
+                raise ValidationError(
+                    "A container cannot be stored inside itself, "
+                    "directly or via another container."
+                )
+            seen.add(ancestor.pk)
+            ancestor = ancestor.container
 
 
 class Item(GenericObject):
