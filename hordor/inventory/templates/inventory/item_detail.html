@@ -5,19 +5,46 @@
         <div class="col-12">
             <h2 class="pb-3">Item: {{ item.name }}</h2>
             {% if item.main_photo %}
-            <img src="{{ item.main_photo.image.url }}" alt="{{ item.name }}" height="400">
+            <a href="{{ item.main_photo.image.url }}" target="_blank" rel="noopener" id="main-photo-link">
+                <img id="main-photo-display" src="{{ item.main_photo.image.url }}" alt="{{ item.name }}"
+                     style="max-height: 60vh; max-width: 100%;">
+            </a>
+            <p class="text-muted"><small>Tap the photo to open it full-size, with pinch-to-zoom.</small></p>
             {% endif %}
             {% if item.photos.count > 1 %}
-            <div class="pt-2">
+            <div class="d-flex pb-2" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
                 {% for photo in item.photos.all %}
-                {% if photo.pk != item.main_photo_id %}
-                <img src="{{ photo.image.url }}" alt="{{ item.name }}" height="80" class="mr-2">
-                {% endif %}
+                <img src="{{ photo.image.url }}" alt="{{ item.name }}"
+                     class="photo-thumb mr-2 {% if photo.pk == item.main_photo_id %}photo-thumb-selected{% endif %}"
+                     style="height: 80px; width: 80px; object-fit: cover; flex-shrink: 0; cursor: pointer;"
+                     onclick="selectItemPhoto(this)">
                 {% endfor %}
             </div>
             {% endif %}
         </div>
     </div>
+
+    <style>
+        .photo-thumb {
+            border: 2px solid transparent;
+            border-radius: 4px;
+        }
+
+        .photo-thumb-selected {
+            border-color: #007bff;
+        }
+    </style>
+
+    <script>
+        function selectItemPhoto(thumbEl) {
+            document.getElementById('main-photo-display').src = thumbEl.src;
+            document.getElementById('main-photo-link').href = thumbEl.src;
+            document.querySelectorAll('.photo-thumb').forEach(function (el) {
+                el.classList.remove('photo-thumb-selected');
+            });
+            thumbEl.classList.add('photo-thumb-selected');
+        }
+    </script>
     {% if item.description != '' %}
     <div class="row">
         <div class="col-12">
