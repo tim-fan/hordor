@@ -5,11 +5,12 @@
         <div class="col-12">
             <h2 class="pb-3">Item: {{ item.name }}</h2>
             {% if item.main_photo %}
-            <a href="{{ item.main_photo.image.url }}" target="_blank" rel="noopener" id="main-photo-link">
-                <img id="main-photo-display" src="{{ item.main_photo.image.url }}" alt="{{ item.name }}"
-                     style="max-height: 60vh; max-width: 100%;">
-            </a>
-            <p class="text-muted"><small>Tap the photo to open it full-size, with pinch-to-zoom.</small></p>
+            <div class="text-center">
+                <a href="{{ item.main_photo.image.url }}" target="_blank" rel="noopener" id="main-photo-link">
+                    <img id="main-photo-display" src="{{ item.main_photo.image.url }}" alt="{{ item.name }}"
+                         style="max-height: 60vh; max-width: 100%;">
+                </a>
+            </div>
             {% endif %}
             {% if item.photos.count > 1 %}
             <div class="d-flex pb-2" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
