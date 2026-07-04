@@ -1,0 +1,71 @@
+{% extends 'inventory/base.html' %}
+{% block content %}
+
+<style>
+    .quick-list-item {
+        display: flex;
+        align-items: center;
+    }
+
+    .quick-list-item img,
+    .quick-list-item .quick-thumb-placeholder {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    .quick-list-item .quick-thumb-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eee;
+        color: #999;
+    }
+</style>
+
+<div class="container pt-3">
+    <div class="d-flex justify-content-between align-items-center pb-3">
+        <h1>Store an item</h1>
+        <a href="{% url 'inventory:new_item_to_store' %}" class="btn btn-primary">+ New Item</a>
+    </div>
+
+    <input type="search" id="quick-filter" class="form-control form-control-lg mb-3"
+           placeholder="Type item name..." autofocus autocomplete="off"
+           oninput="filterQuickList(this.value)">
+
+    <div id="quick-list" class="list-group">
+        {% for item in item_list %}
+        <a href="{% url 'inventory:store_item' item.pk %}"
+           class="list-group-item list-group-item-action quick-list-item"
+           data-name="{{ item.name|lower }}">
+            {% if item.main_photo %}
+            <img src="{{ item.main_photo.image.url }}" alt="" loading="lazy">
+            {% else %}
+            <span class="quick-thumb-placeholder">No photo</span>
+            {% endif %}
+            <span>{{ item.name }}</span>
+        </a>
+        {% empty %}
+        <p class="text-muted">No items available to store right now.</p>
+        {% endfor %}
+    </div>
+    <p id="quick-no-match" class="text-muted pt-3" style="display: none;">No matching items.</p>
+</div>
+
+<script>
+    function filterQuickList(query) {
+        query = query.trim().toLowerCase();
+        var items = document.getElementsByClassName('quick-list-item');
+        var visibleCount = 0;
+        for (var i = 0; i < items.length; i++) {
+            var match = items[i].getAttribute('data-name').indexOf(query) !== -1;
+            items[i].style.display = match ? '' : 'none';
+            if (match) visibleCount++;
+        }
+        document.getElementById('quick-no-match').style.display =
+            (visibleCount === 0 && items.length > 0) ? '' : 'none';
+    }
+</script>
+{% endblock %}

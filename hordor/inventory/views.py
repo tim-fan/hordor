@@ -1,3 +1,4 @@
+from django.db.models import Max
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views import generic
@@ -9,6 +10,15 @@ from django.views.decorators.http import require_POST
 from .models import Item, Container, ItemPhoto
 from .forms import ItemForm, ContainerForm
 import re
+
+
+def items_by_recent_movement():
+    """
+    All items, most recently stored/retrieved/created first.
+    """
+    return Item.objects.annotate(
+        last_moved=Max('itemmovement__moved_at')
+    ).order_by('-last_moved')
 
 
 def get_lowest_available_bag():
@@ -50,6 +60,28 @@ def index(request):
     return render(request, 'inventory/index.html', context)
 
 
+@login_required
+def quick_store_view(request):
+    """
+    Fast picker for storing an item: shows all storable items, most
+    recently moved first, with live name filtering. Tap to jump
+    straight to that item's store-confirmation page.
+    """
+    items = [item for item in items_by_recent_movement() if item.can_be_stored()]
+    return render(request, 'inventory/quick_store.html', {'item_list': items})
+
+
+@login_required
+def quick_retrieve_view(request):
+    """
+    Fast picker for retrieving an item: shows all retrievable items,
+    most recently moved first, with live name filtering. Tap to jump
+    straight to that item's retrieve-confirmation page.
+    """
+    items = [item for item in items_by_recent_movement() if item.can_be_retrieved()]
+    return render(request, 'inventory/quick_retrieve.html', {'item_list': items})
+
+
 class ItemDetailView(LoginRequiredMixin, generic.DetailView):
     model = Item
 
@@ -64,14 +96,23 @@ class ItemListView(LoginRequiredMixin, generic.ListView):
 class ItemTableView(LoginRequiredMixin, generic.ListView):
     template_name = "inventory/item_table.html"
 
+    def show_dispossessed(self):
+        return self.request.GET.get('show_dispossessed') == '1'
+
     def get_queryset(self):
-        # Exclude items in "Dispossessed" container
+        items = Item.objects.order_by('-creation_date')
+        if self.show_dispossessed():
+            return items
         try:
             dispossessed = Container.objects.get(name__iexact="dispossessed")
-            return Item.objects.exclude(container=dispossessed).order_by('-creation_date')
+            return items.exclude(container=dispossessed)
         except Container.DoesNotExist:
-            # If no Dispossessed container exists, return all items
-            return Item.objects.order_by('-creation_date')
+            return items
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['show_dispossessed'] = self.show_dispossessed()
+        return context
 
 
 class ContainerDetailView(LoginRequiredMixin, generic.DetailView):
@@ -97,7 +138,17 @@ class NewItemView(LoginRequiredMixin, generic.CreateView):
     model = Item
     form_class = ItemForm
     template_name = 'inventory/new_item.html'
-    success_url = reverse_lazy('inventory:index')
+    redirect_to_store = False
+
+    def get_success_url(self):
+        if self.redirect_to_store:
+            return reverse_lazy('inventory:store_item', kwargs={'pk': self.object.pk})
+        return reverse_lazy('inventory:index')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['redirect_to_store'] = self.redirect_to_store
+        return context
 
     def form_valid(self, form):
         response = super().form_valid(form)

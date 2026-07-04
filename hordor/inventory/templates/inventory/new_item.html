@@ -4,7 +4,11 @@
   <div class="container pt-3">
     <div class="row">
       <div class="col-md-6 col-xs-12">
+        {% if redirect_to_store %}
+        <h1>Add New Item to Store</h1>
+        {% else %}
         <h1>Add New Item</h1>
+        {% endif %}
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
           {{ form.as_p }}
@@ -13,7 +17,11 @@
             <input type="file" id="id_photos" name="photos" accept="image/*" capture="camera" multiple class="form-control-file">
             <small class="form-text text-muted">The first photo becomes the main photo. You can add more or change the main photo later, on the item's edit page.</small>
           </div>
+          {% if redirect_to_store %}
+          <button type="submit">Add Item &amp; Continue to Store</button>
+          {% else %}
           <button type="submit">Add Item</button>
+          {% endif %}
         </form>
       </div>
     </div>
