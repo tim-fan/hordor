@@ -5,7 +5,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from .models import Item, Container
+from django.views.decorators.http import require_POST
+from .models import Item, Container, ItemPhoto
 from .forms import ItemForm, ContainerForm
 import re
 
@@ -98,6 +99,19 @@ class NewItemView(LoginRequiredMixin, generic.CreateView):
     template_name = 'inventory/new_item.html'
     success_url = reverse_lazy('inventory:index')
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        item = self.object
+        main_photo = None
+        for uploaded_file in self.request.FILES.getlist('photos'):
+            photo = ItemPhoto.objects.create(item=item, image=uploaded_file)
+            if main_photo is None:
+                main_photo = photo
+        if main_photo is not None:
+            item.main_photo = main_photo
+            item.save(update_fields=['main_photo'])
+        return response
+
 
 class NewContainerView(LoginRequiredMixin, generic.CreateView):
     model = Container
@@ -108,7 +122,7 @@ class NewContainerView(LoginRequiredMixin, generic.CreateView):
 
 class ItemUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Item
-    fields = ['name', 'description', 'photo', 'container']
+    fields = ['name', 'description', 'container']
     template_name = 'inventory/item_update.html'
 
     def get_success_url(self):
@@ -190,3 +204,51 @@ def retrieve_item_view(request, pk):
         'container': current_container,
     }
     return render(request, 'inventory/retrieve_item.html', context)
+
+
+@login_required
+@require_POST
+def add_item_photos_view(request, pk):
+    """
+    Add one or more photos to an item. If the item has no main photo yet,
+    the first uploaded photo becomes the main photo.
+    """
+    item = get_object_or_404(Item, pk=pk)
+    main_photo = item.main_photo
+
+    for uploaded_file in request.FILES.getlist('photos'):
+        photo = ItemPhoto.objects.create(item=item, image=uploaded_file)
+        if main_photo is None:
+            main_photo = photo
+
+    if main_photo != item.main_photo:
+        item.main_photo = main_photo
+        item.save(update_fields=['main_photo'])
+
+    return redirect('inventory:item_update', pk=pk)
+
+
+@login_required
+@require_POST
+def set_main_item_photo_view(request, photo_pk):
+    """
+    Set an existing photo as the item's main photo.
+    """
+    photo = get_object_or_404(ItemPhoto, pk=photo_pk)
+    item = photo.item
+    item.main_photo = photo
+    item.save(update_fields=['main_photo'])
+    return redirect('inventory:item_update', pk=item.pk)
+
+
+@login_required
+@require_POST
+def delete_item_photo_view(request, photo_pk):
+    """
+    Delete a photo from an item. If it was the main photo, another
+    remaining photo (if any) is promoted to main automatically.
+    """
+    photo = get_object_or_404(ItemPhoto, pk=photo_pk)
+    item_pk = photo.item_id
+    photo.delete()
+    return redirect('inventory:item_update', pk=item_pk)

@@ -1,12 +1,13 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from django.utils import timezone
 
 
 class GenericObject(models.Model):
     name = models.CharField(max_length=200)
     creation_date = models.DateTimeField('date created', default=timezone.now)
-    photo = models.ImageField(upload_to='images/', null=True, blank=True)
     description = models.TextField(null=False, blank=True)
     container = models.ForeignKey('Container',
                                   on_delete=models.SET_NULL,
@@ -22,6 +23,7 @@ class GenericObject(models.Model):
 
 
 class Container(GenericObject):
+    photo = models.ImageField(upload_to='images/', null=True, blank=True)
 
     def clean(self):
         super().clean()
@@ -38,6 +40,11 @@ class Container(GenericObject):
 
 
 class Item(GenericObject):
+    main_photo = models.ForeignKey('ItemPhoto',
+                                   on_delete=models.SET_NULL,
+                                   blank=True,
+                                   null=True,
+                                   related_name='+')
 
     def can_be_stored(self):
         """Returns True if item can be stored (not in container and not dispossessed)"""
@@ -85,6 +92,34 @@ class Item(GenericObject):
                 is_new_item=is_new_item,
             )
         
+
+
+class ItemPhoto(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='photos')
+    image = models.ImageField(upload_to='images/')
+    uploaded_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Photo for {self.item.name}"
+
+
+@receiver(post_delete, sender=ItemPhoto)
+def cleanup_deleted_item_photo(sender, instance, **kwargs):
+    instance.image.delete(save=False)
+
+    try:
+        item = Item.objects.get(pk=instance.item_id)
+    except Item.DoesNotExist:
+        return
+
+    # Item.main_photo has on_delete=SET_NULL, so if the deleted photo was
+    # the main photo, Django has already nulled it out by this point.
+    # Promote a fallback whenever main_photo is unset but photos remain.
+    if item.main_photo_id is None:
+        replacement = item.photos.order_by('uploaded_at').first()
+        if replacement is not None:
+            item.main_photo = replacement
+            item.save(update_fields=['main_photo'])
 
 
 class ItemMovement(models.Model):

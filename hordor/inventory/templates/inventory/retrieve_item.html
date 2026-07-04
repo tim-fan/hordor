@@ -9,8 +9,8 @@
 
     <div class="row">
         <div class="col-md-6">
-            {% if item.photo %}
-            <img src="{{ item.photo.url }}" alt="{{ item.name }}" class="img-fluid" style="max-height: 300px;">
+            {% if item.main_photo %}
+            <img src="{{ item.main_photo.image.url }}" alt="{{ item.name }}" class="img-fluid" style="max-height: 300px;">
             {% endif %}
         </div>
         <div class="col-md-6">

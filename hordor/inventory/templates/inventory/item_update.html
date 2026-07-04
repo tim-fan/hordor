@@ -11,5 +11,49 @@
       </form>
     </div>
   </div>
+
+  <div class="row pt-4">
+    <div class="col-12">
+      <h2 class="pb-3">Photos</h2>
+
+      <div class="row">
+        {% for photo in item.photos.all %}
+        <div class="col-6 col-md-3 pb-3">
+          <div class="card">
+            <img src="{{ photo.image.url }}" alt="{{ item.name }}" class="card-img-top">
+            <div class="card-body p-2">
+              {% if photo.pk == item.main_photo_id %}
+              <span class="badge badge-primary">Main photo</span>
+              {% else %}
+              <form method="post" action="{% url 'inventory:set_main_item_photo' photo.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-secondary">Set as main</button>
+              </form>
+              {% endif %}
+              <form method="post" action="{% url 'inventory:delete_item_photo' photo.pk %}"
+                    onsubmit="return confirm('Delete this photo?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-danger mt-1">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+          <p>No photos yet.</p>
+        </div>
+        {% endfor %}
+      </div>
+
+      <form method="post" enctype="multipart/form-data" action="{% url 'inventory:add_item_photos' item.pk %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="id_photos">Add photos</label>
+          <input type="file" id="id_photos" name="photos" accept="image/*" capture="camera" multiple class="form-control-file">
+        </div>
+        <button type="submit" class="btn btn-secondary">Upload</button>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

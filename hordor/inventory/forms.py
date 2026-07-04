@@ -11,7 +11,7 @@ class ItemForm(forms.ModelForm):
 
     class Meta:
         model = Item
-        fields = ['name', 'description', 'photo', 'container']
+        fields = ['name', 'description', 'container']
 
         widgets = {
             'name':
@@ -21,8 +21,6 @@ class ItemForm(forms.ModelForm):
                 'class': 'form-control',
                 'rows': 3
             }),
-            'photo':
-            forms.FileInput(attrs={'capture': 'camera'}),
         }
 
 
