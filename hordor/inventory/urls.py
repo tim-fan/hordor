@@ -19,7 +19,6 @@ urlpatterns = [
     path('item/list/', views.ItemListView.as_view(), name='item_list'),
     path('item/table/', views.ItemTableView.as_view(), name='item_table'),
     path('item/new/', views.NewItemView.as_view(), name='new_item'),
-    path('item/new/store/', views.NewItemView.as_view(redirect_to_store=True), name='new_item_to_store'),
     path('<int:pk>/container',
          views.ContainerDetailView.as_view(),
          name='container_detail'),

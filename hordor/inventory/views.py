@@ -138,17 +138,11 @@ class NewItemView(LoginRequiredMixin, generic.CreateView):
     model = Item
     form_class = ItemForm
     template_name = 'inventory/new_item.html'
-    redirect_to_store = False
 
     def get_success_url(self):
-        if self.redirect_to_store:
+        if self.request.POST.get('action') == 'store':
             return reverse_lazy('inventory:store_item', kwargs={'pk': self.object.pk})
         return reverse_lazy('inventory:index')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['redirect_to_store'] = self.redirect_to_store
-        return context
 
     def form_valid(self, form):
         response = super().form_valid(form)
