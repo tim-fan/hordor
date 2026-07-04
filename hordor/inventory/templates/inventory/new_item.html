@@ -8,11 +8,7 @@
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
           {{ form.as_p }}
-          <div class="form-group">
-            <label for="id_photos">Photos</label>
-            <input type="file" id="id_photos" name="photos" accept="image/*" capture="camera" multiple class="form-control-file">
-            <small class="form-text text-muted">The first photo becomes the main photo. You can add more or change the main photo later, on the item's edit page.</small>
-          </div>
+          {% include "inventory/components/photo_capture_widget.html" %}
           <button type="submit" name="action" value="store" class="btn btn-primary">Add &amp; Store</button>
           <button type="submit" name="action" value="save" class="btn btn-secondary">Add Only</button>
         </form>

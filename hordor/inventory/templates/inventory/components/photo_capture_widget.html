@@ -1,0 +1,116 @@
+{% comment %}
+Multi-photo capture widget. Works around a mobile browser limitation:
+tapping a `capture="camera"` file input a second time REPLACES the
+FileList instead of appending to it, so only the last photo taken
+ends up submitted. This accumulates captured files in JS instead,
+shows a thumbnail immediately, and syncs them into the real
+`name="photos"` input the form submits.
+{% endcomment %}
+<div class="form-group photo-capture-widget">
+    <label>{{ label|default:"Photos" }}</label>
+    <div class="photo-capture-previews d-flex flex-wrap"></div>
+    <input type="file" class="photo-capture-trigger d-none" accept="image/*" capture="camera" multiple>
+    <input type="file" name="photos" class="photo-capture-submit d-none" multiple>
+    <button type="button" class="btn btn-secondary photo-capture-add">+ Take / Choose Photo</button>
+    {% if help_text|default:True %}
+    <small class="form-text text-muted">The first photo is the main photo. Tap &times; to remove one before submitting.</small>
+    {% endif %}
+</div>
+
+<style>
+    .photo-capture-previews:not(:empty) {
+        margin-bottom: 0.75rem;
+    }
+
+    .photo-capture-preview {
+        position: relative;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .photo-capture-preview img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .photo-capture-preview .badge {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+    }
+
+    .photo-capture-preview .photo-capture-remove {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        line-height: 1;
+    }
+</style>
+
+<script>
+    (function () {
+        document.querySelectorAll('.photo-capture-widget').forEach(function (widget) {
+            var files = [];
+            var previews = widget.querySelector('.photo-capture-previews');
+            var trigger = widget.querySelector('.photo-capture-trigger');
+            var submitInput = widget.querySelector('.photo-capture-submit');
+            var addButton = widget.querySelector('.photo-capture-add');
+
+            addButton.addEventListener('click', function () {
+                trigger.click();
+            });
+
+            trigger.addEventListener('change', function () {
+                for (var i = 0; i < trigger.files.length; i++) {
+                    files.push(trigger.files[i]);
+                }
+                trigger.value = '';
+                render();
+            });
+
+            function render() {
+                previews.innerHTML = '';
+                files.forEach(function (file, index) {
+                    var item = document.createElement('div');
+                    item.className = 'photo-capture-preview';
+
+                    var img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    item.appendChild(img);
+
+                    if (index === 0) {
+                        var badge = document.createElement('span');
+                        badge.className = 'badge badge-primary';
+                        badge.textContent = 'Main';
+                        item.appendChild(badge);
+                    }
+
+                    var remove = document.createElement('button');
+                    remove.type = 'button';
+                    remove.className = 'btn btn-sm btn-danger photo-capture-remove';
+                    remove.textContent = '×';
+                    remove.addEventListener('click', function () {
+                        files.splice(index, 1);
+                        render();
+                    });
+                    item.appendChild(remove);
+
+                    previews.appendChild(item);
+                });
+
+                var dataTransfer = new DataTransfer();
+                files.forEach(function (file) {
+                    dataTransfer.items.add(file);
+                });
+                submitInput.files = dataTransfer.files;
+            }
+        });
+    })();
+</script>

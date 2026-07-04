@@ -47,10 +47,7 @@
 
       <form method="post" enctype="multipart/form-data" action="{% url 'inventory:add_item_photos' item.pk %}">
         {% csrf_token %}
-        <div class="form-group">
-          <label for="id_photos">Add photos</label>
-          <input type="file" id="id_photos" name="photos" accept="image/*" capture="camera" multiple class="form-control-file">
-        </div>
+        {% include "inventory/components/photo_capture_widget.html" with label="Add photos" help_text=False %}
         <button type="submit" class="btn btn-secondary">Upload</button>
       </form>
     </div>
