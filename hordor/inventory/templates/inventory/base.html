@@ -114,6 +114,12 @@
             .navbar-3col-right {
                 justify-content: flex-end;
             }
+
+            /* Let .navbar-collapse fill its slot so ml-auto on the nav
+               list inside it has room to push the links to the right. */
+            .navbar-3col-right .navbar-collapse {
+                flex: 1 1 auto;
+            }
         }
     </style>
 </head>
@@ -121,7 +127,7 @@
 <body>
     {% block navbar %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light ">
-        <div class="container">
+        <div class="{% block nav_container_class %}container{% endblock %}">
             <div class="navbar-3col-left">
                 <a class="navbar-brand" href="{% url 'inventory:index' %}">Hordor</a>
             </div>
@@ -138,7 +144,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'inventory:item_list' %}">Items</a>
                         </li>
