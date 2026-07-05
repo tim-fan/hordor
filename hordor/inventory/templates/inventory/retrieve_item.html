@@ -15,43 +15,77 @@
         font-size: 1.5rem;
         line-height: 1.2;
     }
+
+    .flow-card-photo {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 360px;
+        min-height: 0;
+    }
+
+    .flow-card-photo-image {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+
+    .flow-card-photo-image img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .flow-card-photo-footer {
+        flex: 0 0 auto;
+        text-align: center;
+        word-break: break-word;
+    }
 </style>
 
 <form method="post" class="d-flex flex-column" style="height: 100vh; height: 100dvh; overflow: hidden;">
     {% csrf_token %}
-    <div class="px-3 flex-shrink-0 d-flex flex-column justify-content-center align-items-center text-center"
-         style="flex: 0 0 33vh;">
-        <h5 class="text-muted mb-2">Retrieve Item</h5>
 
-        <div class="flow-card bg-light">
+    <div class="px-3 pt-3 pb-1 flex-shrink-0 text-center">
+        <h5 class="text-muted mb-0">Retrieve Item</h5>
+    </div>
+
+    <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center px-3 py-2"
+         style="min-height: 0;">
+
+        <div class="flow-card bg-light flex-shrink-0">
             {{ container.name }} &#128230;
         </div>
 
-        <div class="flow-arrow text-warning">&darr;</div>
+        <div class="flow-arrow text-warning flex-shrink-0">&darr;</div>
 
-        <div class="flow-card">
-            <strong>{{ item.name }}</strong>
+        <div class="flow-card flow-card-photo{% if item.main_photo %} flex-grow-1{% endif %}">
+            {% if item.main_photo %}
+            <div class="flow-card-photo-image">
+                <img src="{{ item.main_photo.image.url }}" alt="{{ item.name }}">
+            </div>
+            {% endif %}
+            <div class="flow-card-photo-footer">
+                <strong>{{ item.name }}</strong>
+                <div class="small"><a href="{% url 'inventory:item_detail' item.id %}">View item details</a></div>
+            </div>
         </div>
 
-        <div class="mt-3 d-flex justify-content-center">
+    </div>
+
+    <div class="px-3 pb-3 flex-shrink-0">
+        <div class="d-flex justify-content-center mb-2">
             <button type="submit" class="btn btn-warning btn-lg mr-2">Confirm Item Retrieved</button>
             <a href="{% url 'inventory:item_detail' item.id %}" class="btn btn-secondary btn-lg">Cancel</a>
         </div>
-    </div>
 
-    <div class="flex-grow-1 d-flex align-items-center justify-content-center px-3" style="min-height: 0;">
-        {% if item.main_photo %}
-        <img src="{{ item.main_photo.image.url }}" alt="{{ item.name }}"
-             style="max-width: 100%; max-height: 100%; object-fit: contain;">
-        {% endif %}
-    </div>
-
-    <div class="px-3 pt-2 pb-3 flex-shrink-0">
-        <div class="alert alert-warning py-2 mb-2">
+        <div class="alert alert-warning py-2 mb-0">
             <p class="mb-0 small">Once you have physically removed the item from {{ container.name }}, click confirm above.</p>
         </div>
-
-        <p class="mb-0"><a href="{% url 'inventory:item_detail' item.id %}">View item details</a></p>
     </div>
 </form>
 {% endblock %}
