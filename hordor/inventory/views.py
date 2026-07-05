@@ -9,7 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from .imaging import rotate_image_field
-from .models import Item, Container, ItemPhoto
+from .models import Item, Container, ItemPhoto, ItemMovement
 from .forms import ItemForm, ContainerForm, ContainerSelectForm
 import re
 
@@ -71,6 +71,38 @@ def quick_retrieve_view(request):
     """
     items = [item for item in items_by_recent_movement() if item.can_be_retrieved()]
     return render(request, 'inventory/quick_retrieve.html', {'item_list': items})
+
+
+class DashboardView(LoginRequiredMixin, generic.TemplateView):
+    template_name = 'inventory/dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        total_items = Item.objects.count()
+        try:
+            dispossessed = Container.objects.get(name__iexact="dispossessed")
+            possessed_items = total_items - Item.objects.filter(container=dispossessed).count()
+        except Container.DoesNotExist:
+            possessed_items = total_items
+        stored_items = Item.objects.filter(container__isnull=False).count()
+
+        empty_bag_count = Container.objects.filter(
+            name__istartswith="bag"
+        ).annotate(
+            item_count=Count('stored_items')
+        ).filter(item_count=0).count()
+
+        context.update({
+            'total_items': total_items,
+            'possessed_items': possessed_items,
+            'stored_items': stored_items,
+            'empty_bag_count': empty_bag_count,
+            'recent_movements': ItemMovement.objects.select_related(
+                'item', 'item__main_photo', 'to_container'
+            ).order_by('-moved_at')[:10],
+        })
+        return context
 
 
 class ItemDetailView(LoginRequiredMixin, generic.DetailView):
