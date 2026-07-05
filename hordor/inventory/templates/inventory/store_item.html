@@ -64,27 +64,27 @@
 
         <p class="mb-0"><a href="{% url 'inventory:item_detail' item.id %}">View item details</a></p>
     </div>
-</form>
 
-<div class="modal fade" id="containerPickerModal" tabindex="-1" role="dialog" aria-labelledby="containerPickerModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="containerPickerModalLabel">Choose a container</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                {% if bag %}
-                {% include "inventory/components/container_picker.html" with select_field=form.container pinned_option_label="Auto select" pinned_option_value=bag.pk start_expanded=True hide_label=True %}
-                {% else %}
-                {% include "inventory/components/container_picker.html" with select_field=form.container start_expanded=True hide_label=True %}
-                {% endif %}
+    <div class="modal fade" id="containerPickerModal" tabindex="-1" role="dialog" aria-labelledby="containerPickerModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="containerPickerModalLabel">Choose a container</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% if bag %}
+                    {% include "inventory/components/container_picker.html" with select_field=form.container pinned_option_label="Auto select" pinned_option_value=bag.pk start_expanded=True hide_label=True %}
+                    {% else %}
+                    {% include "inventory/components/container_picker.html" with select_field=form.container start_expanded=True hide_label=True %}
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
-</div>
+</form>
 
 <script>
     var suggestedBagId = "{{ bag.pk|default:'' }}";
