@@ -1,10 +1,14 @@
 {% extends 'inventory/base.html' %}
 {% block navbar %}{% endblock %}
 {% block content %}
-<div class="d-flex flex-column" style="height: 100vh; overflow: hidden;">
-    <div class="px-3 pt-2 flex-shrink-0">
-        <h2 class="mb-1">Retrieve Item: {{ item.name }}</h2>
-        <p class="mb-0"><a href="{% url 'inventory:item_detail' item.id %}">View item details</a></p>
+<form method="post" class="d-flex flex-column" style="height: 100vh; height: 100dvh; overflow: hidden;">
+    {% csrf_token %}
+    <div class="px-3 pt-2 pb-3 flex-shrink-0">
+        <h2 class="mb-3">Retrieve Item: {{ item.name }}</h2>
+        <div class="d-flex">
+            <button type="submit" class="btn btn-warning btn-lg mr-2">Confirm Item Retrieved</button>
+            <a href="{% url 'inventory:item_detail' item.id %}" class="btn btn-secondary btn-lg">Cancel</a>
+        </div>
     </div>
 
     <div class="flex-grow-1 d-flex align-items-center justify-content-center px-3" style="min-height: 0;">
@@ -14,17 +18,13 @@
         {% endif %}
     </div>
 
-    <div class="px-3 pb-3 flex-shrink-0">
+    <div class="px-3 pt-2 pb-3 flex-shrink-0">
         <div class="alert alert-warning py-2 mb-2">
             <p class="lead mb-1">Remove this item from <strong>{{ container.name }}</strong></p>
-            <p class="mb-0 small">Once you have physically removed the item from {{ container.name }}, click confirm below.</p>
+            <p class="mb-0 small">Once you have physically removed the item from {{ container.name }}, click confirm above.</p>
         </div>
 
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-warning btn-lg">Confirm Item Retrieved</button>
-            <a href="{% url 'inventory:item_detail' item.id %}" class="btn btn-secondary btn-lg">Cancel</a>
-        </form>
+        <p class="mb-0"><a href="{% url 'inventory:item_detail' item.id %}">View item details</a></p>
     </div>
-</div>
+</form>
 {% endblock %}
