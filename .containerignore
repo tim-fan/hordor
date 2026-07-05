@@ -1,0 +1,9 @@
+hordor/db.sqlite3
+hordor/media/
+hordor/staticfiles/
+**/__pycache__/
+**/*.pyc
+.git/
+.devcontainer/
+.vscode/
+doc/
