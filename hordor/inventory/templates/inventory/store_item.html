@@ -3,10 +3,12 @@
 {% block content %}
 <form method="post" class="d-flex flex-column" style="height: 100vh; height: 100dvh; overflow: hidden;">
     {% csrf_token %}
-    <div class="px-3 pt-2 flex-shrink-0">
-        <h2 class="mb-2">Store Item: {{ item.name }}</h2>
-        <button type="submit" class="btn btn-primary btn-lg">Confirm Item Stored</button>
-        <a href="{% url 'inventory:item_detail' item.id %}" class="btn btn-secondary btn-lg">Cancel</a>
+    <div class="px-3 pt-2 pb-3 flex-shrink-0">
+        <h2 class="mb-3">Store Item: {{ item.name }}</h2>
+        <div class="d-flex">
+            <button type="submit" class="btn btn-primary btn-lg mr-2">Confirm Item Stored</button>
+            <a href="{% url 'inventory:item_detail' item.id %}" class="btn btn-secondary btn-lg">Cancel</a>
+        </div>
     </div>
 
     <div class="flex-grow-1 d-flex align-items-center justify-content-center px-3" style="min-height: 0;">
@@ -16,9 +18,7 @@
         {% endif %}
     </div>
 
-    <div class="px-3 pb-3 flex-shrink-0">
-        <p class="mb-2"><a href="{% url 'inventory:item_detail' item.id %}">View item details</a></p>
-
+    <div class="px-3 pt-2 pb-3 flex-shrink-0">
         {% if not bag %}
         <div class="alert alert-warning py-2 mb-2" id="store-no-bag-alert">
             <strong>No empty bags available</strong> &mdash; choose a container below to store this item in.
@@ -29,6 +29,8 @@
             <p class="lead mb-1">Put this item in <strong id="store-target-name">{{ bag.name }}</strong></p>
             <p class="mb-0 small">Once you have physically placed the item there, click confirm above.</p>
         </div>
+
+        <p class="mb-2"><a href="{% url 'inventory:item_detail' item.id %}">View item details</a></p>
 
         <div class="mb-2">
             {% if bag %}
