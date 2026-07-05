@@ -140,6 +140,13 @@ class NewItemView(LoginRequiredMixin, generic.CreateView):
     form_class = ItemForm
     template_name = 'inventory/new_item.html'
 
+    def get_initial(self):
+        initial = super().get_initial()
+        name = self.request.GET.get('name')
+        if name:
+            initial['name'] = name
+        return initial
+
     def get_success_url(self):
         if self.request.POST.get('action') == 'store':
             return reverse_lazy('inventory:store_item', kwargs={'pk': self.object.pk})

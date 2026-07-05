@@ -23,6 +23,20 @@
         background: #eee;
         color: #999;
     }
+
+    .quick-list-item-action {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        min-width: 0;
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .quick-list-item-details {
+        flex-shrink: 0;
+        margin-left: 0.5rem;
+    }
 </style>
 
 <div class="container pt-3">
@@ -34,16 +48,17 @@
 
     <div id="quick-list" class="list-group">
         {% for item in item_list %}
-        <a href="{% url 'inventory:retrieve_item' item.pk %}"
-           class="list-group-item list-group-item-action quick-list-item"
-           data-name="{{ item.name|lower }}">
-            {% if item.main_photo %}
-            <img src="{{ item.main_photo.image.url }}" alt="" loading="lazy">
-            {% else %}
-            <span class="quick-thumb-placeholder">No photo</span>
-            {% endif %}
-            <span>{{ item.name }}</span>
-        </a>
+        <div class="list-group-item quick-list-item" data-name="{{ item.name|lower }}">
+            <a href="{% url 'inventory:retrieve_item' item.pk %}" class="quick-list-item-action">
+                {% if item.main_photo %}
+                <img src="{{ item.main_photo.image.url }}" alt="" loading="lazy">
+                {% else %}
+                <span class="quick-thumb-placeholder">No photo</span>
+                {% endif %}
+                <span>{{ item.name }}</span>
+            </a>
+            <a href="{% url 'inventory:item_detail' item.pk %}" class="quick-list-item-details small text-muted">Details</a>
+        </div>
         {% empty %}
         <p class="text-muted">No items available to retrieve right now.</p>
         {% endfor %}
