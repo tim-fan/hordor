@@ -28,7 +28,7 @@ class ContainerForm(forms.ModelForm):
 
     class Meta:
         model = Container
-        fields = ['name', 'description', 'photo', 'container']
+        fields = ['name', 'description', 'container']
 
         widgets = {
             'name':
@@ -38,8 +38,6 @@ class ContainerForm(forms.ModelForm):
                 'class': 'form-control',
                 'rows': 3
             }),
-            'photo':
-            forms.FileInput(attrs={'capture': 'camera'}),
         }
 
 

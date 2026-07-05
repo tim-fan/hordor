@@ -3,7 +3,7 @@ import os
 from django.core.management.base import BaseCommand
 
 from inventory.imaging import as_jpg_name, compress_image_file
-from inventory.models import Container, ItemPhoto
+from inventory.models import Photo
 
 
 class Command(BaseCommand):
@@ -23,11 +23,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
 
-        field_files = [(photo, 'image') for photo in ItemPhoto.objects.all()]
-        field_files += [
-            (container, 'photo')
-            for container in Container.objects.exclude(photo='').exclude(photo__isnull=True)
-        ]
+        field_files = [(photo, 'image') for photo in Photo.objects.all()]
 
         total_before = 0
         total_after = 0

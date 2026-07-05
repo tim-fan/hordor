@@ -16,6 +16,11 @@ class GenericObject(models.Model):
                                   blank=True,
                                   null=True,
                                   related_name='stored_%(class)ss')
+    main_photo = models.ForeignKey('Photo',
+                                   on_delete=models.SET_NULL,
+                                   blank=True,
+                                   null=True,
+                                   related_name='+')
 
     def __str__(self):
         return self.name
@@ -25,7 +30,6 @@ class GenericObject(models.Model):
 
 
 class Container(GenericObject):
-    photo = models.ImageField(upload_to='images/', null=True, blank=True)
 
     def clean(self):
         super().clean()
@@ -40,19 +44,8 @@ class Container(GenericObject):
             seen.add(ancestor.pk)
             ancestor = ancestor.container
 
-    def save(self, *args, **kwargs):
-        if self.photo and not self.photo._committed:
-            compressed = compress_image_file(self.photo)
-            self.photo.save(as_jpg_name(self.photo.name), compressed, save=False)
-        super().save(*args, **kwargs)
-
 
 class Item(GenericObject):
-    main_photo = models.ForeignKey('ItemPhoto',
-                                   on_delete=models.SET_NULL,
-                                   blank=True,
-                                   null=True,
-                                   related_name='+')
 
     def can_be_stored(self):
         """Returns True if item can be stored (not in container and not dispossessed)"""
@@ -102,13 +95,23 @@ class Item(GenericObject):
         
 
 
-class ItemPhoto(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='photos')
+class Photo(models.Model):
+    """
+    A photo belonging to exactly one of Item or Container. Shared model
+    (rather than one per owner type) so add/rotate/delete/set-main can
+    be implemented once and used identically for items and containers.
+    """
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, null=True, blank=True, related_name='photos')
+    container = models.ForeignKey(Container, on_delete=models.CASCADE, null=True, blank=True, related_name='photos')
     image = models.ImageField(upload_to='images/')
     uploaded_at = models.DateTimeField(default=timezone.now)
 
+    @property
+    def owner(self):
+        return self.item or self.container
+
     def __str__(self):
-        return f"Photo for {self.item.name}"
+        return f"Photo for {self.owner.name}"
 
     def save(self, *args, **kwargs):
         if self.image and not self.image._committed:
@@ -117,23 +120,30 @@ class ItemPhoto(models.Model):
         super().save(*args, **kwargs)
 
 
-@receiver(post_delete, sender=ItemPhoto)
-def cleanup_deleted_item_photo(sender, instance, **kwargs):
+@receiver(post_delete, sender=Photo)
+def cleanup_deleted_photo(sender, instance, **kwargs):
     instance.image.delete(save=False)
 
-    try:
-        item = Item.objects.get(pk=instance.item_id)
-    except Item.DoesNotExist:
+    if instance.item_id is not None:
+        owner_model, owner_id = Item, instance.item_id
+    elif instance.container_id is not None:
+        owner_model, owner_id = Container, instance.container_id
+    else:
         return
 
-    # Item.main_photo has on_delete=SET_NULL, so if the deleted photo was
-    # the main photo, Django has already nulled it out by this point.
+    try:
+        owner = owner_model.objects.get(pk=owner_id)
+    except owner_model.DoesNotExist:
+        return
+
+    # main_photo has on_delete=SET_NULL, so if the deleted photo was the
+    # main photo, Django has already nulled it out by this point.
     # Promote a fallback whenever main_photo is unset but photos remain.
-    if item.main_photo_id is None:
-        replacement = item.photos.order_by('uploaded_at').first()
+    if owner.main_photo_id is None:
+        replacement = owner.photos.order_by('uploaded_at').first()
         if replacement is not None:
-            item.main_photo = replacement
-            item.save(update_fields=['main_photo'])
+            owner.main_photo = replacement
+            owner.save(update_fields=['main_photo'])
 
 
 class ItemMovement(models.Model):

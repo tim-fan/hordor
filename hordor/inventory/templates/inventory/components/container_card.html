@@ -1,7 +1,7 @@
 <div class="card">
     <a href="{% url 'inventory:container_detail' container.id %}">
-        {% if container.photo %}
-        <img class="card-img-top" src="{{ container.photo.url }}" alt="{{ container.name }}" />
+        {% if container.main_photo %}
+        <img class="card-img-top" src="{{ container.main_photo.image.url }}" alt="{{ container.name }}" />
         {% endif %}
         <div class="card-header">{{ container.name }}</div>
     </a>

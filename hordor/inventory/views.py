@@ -9,9 +9,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from .imaging import rotate_image_field
-from .models import Item, Container, ItemPhoto, ItemMovement
+from .models import Item, Container, Photo, ItemMovement
 from .forms import ItemForm, ContainerForm, ContainerSelectForm
 import re
+
+
+def _update_url_name(owner):
+    return 'inventory:item_update' if isinstance(owner, Item) else 'inventory:container_update'
 
 
 def items_by_recent_movement():
@@ -206,7 +210,7 @@ class NewItemView(LoginRequiredMixin, generic.CreateView):
         item = self.object
         main_photo = None
         for uploaded_file in self.request.FILES.getlist('photos'):
-            photo = ItemPhoto.objects.create(item=item, image=uploaded_file)
+            photo = Photo.objects.create(item=item, image=uploaded_file)
             if main_photo is None:
                 main_photo = photo
         if main_photo is not None:
@@ -220,6 +224,19 @@ class NewContainerView(LoginRequiredMixin, generic.CreateView):
     form_class = ContainerForm
     template_name = 'inventory/new_container.html'
     success_url = reverse_lazy('inventory:index')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        container = self.object
+        main_photo = None
+        for uploaded_file in self.request.FILES.getlist('photos'):
+            photo = Photo.objects.create(container=container, image=uploaded_file)
+            if main_photo is None:
+                main_photo = photo
+        if main_photo is not None:
+            container.main_photo = main_photo
+            container.save(update_fields=['main_photo'])
+        return response
 
 
 class ItemUpdateView(LoginRequiredMixin, generic.UpdateView):
@@ -309,61 +326,75 @@ def retrieve_item_view(request, pk):
     return render(request, 'inventory/retrieve_item.html', context)
 
 
-@login_required
-@require_POST
-def add_item_photos_view(request, pk):
+def _add_photos(request, owner):
     """
-    Add one or more photos to an item. If the item has no main photo yet,
-    the first uploaded photo becomes the main photo.
+    Add one or more photos to an item or container. If the owner has no
+    main photo yet, the first uploaded photo becomes the main photo.
+    Shared by add_item_photos_view / add_container_photos_view.
     """
-    item = get_object_or_404(Item, pk=pk)
-    main_photo = item.main_photo
+    main_photo = owner.main_photo
+    owner_kwargs = {'item': owner} if isinstance(owner, Item) else {'container': owner}
 
     for uploaded_file in request.FILES.getlist('photos'):
-        photo = ItemPhoto.objects.create(item=item, image=uploaded_file)
+        photo = Photo.objects.create(image=uploaded_file, **owner_kwargs)
         if main_photo is None:
             main_photo = photo
 
-    if main_photo != item.main_photo:
-        item.main_photo = main_photo
-        item.save(update_fields=['main_photo'])
+    if main_photo != owner.main_photo:
+        owner.main_photo = main_photo
+        owner.save(update_fields=['main_photo'])
 
-    return redirect('inventory:item_update', pk=pk)
-
-
-@login_required
-@require_POST
-def set_main_item_photo_view(request, photo_pk):
-    """
-    Set an existing photo as the item's main photo.
-    """
-    photo = get_object_or_404(ItemPhoto, pk=photo_pk)
-    item = photo.item
-    item.main_photo = photo
-    item.save(update_fields=['main_photo'])
-    return redirect('inventory:item_update', pk=item.pk)
+    return redirect(_update_url_name(owner), pk=owner.pk)
 
 
 @login_required
 @require_POST
-def delete_item_photo_view(request, photo_pk):
+def add_item_photos_view(request, pk):
+    return _add_photos(request, get_object_or_404(Item, pk=pk))
+
+
+@login_required
+@require_POST
+def add_container_photos_view(request, pk):
+    return _add_photos(request, get_object_or_404(Container, pk=pk))
+
+
+@login_required
+@require_POST
+def set_main_photo_view(request, photo_pk):
     """
-    Delete a photo from an item. If it was the main photo, another
-    remaining photo (if any) is promoted to main automatically.
+    Set an existing photo as its owner's (item or container) main photo.
     """
-    photo = get_object_or_404(ItemPhoto, pk=photo_pk)
-    item_pk = photo.item_id
+    photo = get_object_or_404(Photo, pk=photo_pk)
+    owner = photo.owner
+    owner.main_photo = photo
+    owner.save(update_fields=['main_photo'])
+    return redirect(_update_url_name(owner), pk=owner.pk)
+
+
+@login_required
+@require_POST
+def delete_photo_view(request, photo_pk):
+    """
+    Delete a photo. If it was the owner's main photo, another remaining
+    photo (if any) is promoted to main automatically.
+    """
+    photo = get_object_or_404(Photo, pk=photo_pk)
+    owner = photo.owner
+    url_name = _update_url_name(owner)
+    owner_pk = owner.pk
     photo.delete()
-    return redirect('inventory:item_update', pk=item_pk)
+    return redirect(url_name, pk=owner_pk)
 
 
 @login_required
 @require_POST
-def rotate_item_photo_view(request, photo_pk):
+def rotate_photo_view(request, photo_pk):
     """
     Rotate a photo 90 degrees clockwise, rewriting the file in place.
     """
-    photo = get_object_or_404(ItemPhoto, pk=photo_pk)
+    photo = get_object_or_404(Photo, pk=photo_pk)
+    owner = photo.owner
     rotate_image_field(photo.image, degrees=-90)
     photo.save(update_fields=['image'])
-    return redirect('inventory:item_update', pk=photo.item_id)
+    return redirect(_update_url_name(owner), pk=owner.pk)

@@ -4,14 +4,14 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from inventory.models import Container, ItemPhoto
+from inventory.models import Photo
 
 
 class Command(BaseCommand):
     help = (
         "Delete image files under MEDIA_ROOT/images that aren't referenced "
-        "by any ItemPhoto or Container. Safe by default (reports only) -- "
-        "pass --delete to actually remove files."
+        "by any Photo. Safe by default (reports only) -- pass --delete to "
+        "actually remove files."
     )
 
     def add_arguments(self, parser):
@@ -32,11 +32,9 @@ class Command(BaseCommand):
         images_dir = Path(settings.MEDIA_ROOT) / 'images'
 
         referenced = set()
-        for photo in ItemPhoto.objects.all():
+        for photo in Photo.objects.all():
             if photo.image:
                 referenced.add(photo.image.name)
-        for container in Container.objects.exclude(photo='').exclude(photo__isnull=True):
-            referenced.add(container.photo.name)
 
         min_age_seconds = options['min_age_hours'] * 3600
         now = time.time()
