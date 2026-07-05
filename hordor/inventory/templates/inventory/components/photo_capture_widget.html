@@ -52,9 +52,41 @@ shows a thumbnail immediately, and syncs them into the real
         padding: 0;
         line-height: 1;
     }
+
+    .photo-capture-preview .photo-capture-rotate {
+        position: absolute;
+        bottom: -8px;
+        right: -8px;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        line-height: 1;
+    }
 </style>
 
 <script>
+    function rotateFile(file) {
+        return new Promise(function (resolve) {
+            var url = URL.createObjectURL(file);
+            var img = new Image();
+            img.onload = function () {
+                var canvas = document.createElement('canvas');
+                canvas.width = img.height;
+                canvas.height = img.width;
+                var ctx = canvas.getContext('2d');
+                ctx.translate(canvas.width / 2, canvas.height / 2);
+                ctx.rotate(90 * Math.PI / 180);
+                ctx.drawImage(img, -img.width / 2, -img.height / 2);
+                canvas.toBlob(function (blob) {
+                    URL.revokeObjectURL(url);
+                    resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                }, 'image/jpeg', 0.92);
+            };
+            img.src = url;
+        });
+    }
+
     (function () {
         document.querySelectorAll('.photo-capture-widget').forEach(function (widget) {
             var files = [];
@@ -101,6 +133,18 @@ shows a thumbnail immediately, and syncs them into the real
                         render();
                     });
                     item.appendChild(remove);
+
+                    var rotate = document.createElement('button');
+                    rotate.type = 'button';
+                    rotate.className = 'btn btn-sm btn-secondary photo-capture-rotate';
+                    rotate.innerHTML = '&#8635;';
+                    rotate.addEventListener('click', function () {
+                        rotateFile(files[index]).then(function (rotated) {
+                            files[index] = rotated;
+                            render();
+                        });
+                    });
+                    item.appendChild(rotate);
 
                     previews.appendChild(item);
                 });
