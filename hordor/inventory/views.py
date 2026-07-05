@@ -155,7 +155,9 @@ class ItemTableView(LoginRequiredMixin, generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['container_filter'] = self.get_container_filter()
-        context['containers'] = Container.objects.order_by('-creation_date')
+        context['containers'] = Container.objects.exclude(
+            name__iexact="dispossessed"
+        ).order_by('-creation_date')
         now = timezone.now()
         for item in context['item_list']:
             age_days = max((now - item.creation_date).days, 1)

@@ -156,6 +156,19 @@
                 <option value="5,desc">Sort: Activity rate (highest)</option>
             </select>
 
+            <div class="form-group" style="max-width: 300px;">
+                <label for="container-filter" class="small text-muted mb-1">Container filter</label>
+                <select id="container-filter" class="form-control"
+                        onchange="window.location = this.value ? '?container=' + encodeURIComponent(this.value) : window.location.pathname">
+                    <option value="" {% if not container_filter %}selected{% endif %}>None</option>
+                    <option value="none" {% if container_filter == 'none' %}selected{% endif %}>Not in a container</option>
+                    <option value="dispossessed" {% if container_filter == 'dispossessed' %}selected{% endif %}>Dispossessed</option>
+                    {% for c in containers %}
+                    <option value="{{ c.pk }}" {% if container_filter == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <table id="item_table" class="table table-striped table-sm">
                 <thead>
                     <tr>
@@ -198,19 +211,6 @@
                     {% endfor %}
                 </tbody>
             </table>
-
-            <div class="form-group pt-2" style="max-width: 300px;">
-                <label for="container-filter" class="small text-muted mb-1">Filter by container</label>
-                <select id="container-filter" class="form-control"
-                        onchange="window.location = this.value ? '?container=' + encodeURIComponent(this.value) : window.location.pathname">
-                    <option value="" {% if not container_filter %}selected{% endif %}>All (excluding dispossessed)</option>
-                    <option value="none" {% if container_filter == 'none' %}selected{% endif %}>None (not in a container)</option>
-                    <option value="dispossessed" {% if container_filter == 'dispossessed' %}selected{% endif %}>Dispossessed</option>
-                    {% for c in containers %}
-                    <option value="{{ c.pk }}" {% if container_filter == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
         </div>
     </div>
 </div>
