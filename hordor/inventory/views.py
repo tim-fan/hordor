@@ -1,6 +1,7 @@
-from django.db.models import Max
+from django.db.models import Count, Max
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.views import generic
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -95,7 +96,10 @@ class ItemTableView(LoginRequiredMixin, generic.ListView):
         return self.request.GET.get('show_dispossessed') == '1'
 
     def get_queryset(self):
-        items = Item.objects.order_by('-creation_date')
+        items = Item.objects.annotate(
+            last_moved=Max('itemmovement__moved_at'),
+            movement_count=Count('itemmovement'),
+        ).order_by('-last_moved')
         if self.show_dispossessed():
             return items
         try:
@@ -107,6 +111,10 @@ class ItemTableView(LoginRequiredMixin, generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['show_dispossessed'] = self.show_dispossessed()
+        now = timezone.now()
+        for item in context['item_list']:
+            age_days = max((now - item.creation_date).days, 1)
+            item.activity_rate = item.movement_count / age_days * 30
         return context
 
 
