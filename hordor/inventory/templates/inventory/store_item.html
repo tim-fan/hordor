@@ -26,18 +26,13 @@
             <p class="mb-0 small">Once you have physically placed the item there, click confirm below.</p>
         </div>
 
-        <button type="button" class="btn btn-link p-0 mb-2" id="select-different-btn"
-                onclick="showContainerOverride();" {% if not bag %}style="display: none;"{% endif %}>
-            Select different container
-        </button>
-
         <form method="post">
             {% csrf_token %}
-            <div id="container-override" class="{% if bag %}d-none{% endif %} mb-2">
+            <div class="mb-2">
                 {% if bag %}
                 {% include "inventory/components/container_picker.html" with select_field=form.container pinned_option_label="Auto select" pinned_option_value=bag.pk %}
                 {% else %}
-                {% include "inventory/components/container_picker.html" with select_field=form.container %}
+                {% include "inventory/components/container_picker.html" with select_field=form.container start_expanded=True %}
                 {% endif %}
             </div>
             <button type="submit" class="btn btn-primary btn-lg">Confirm Item Stored</button>
@@ -50,24 +45,12 @@
     var suggestedBagId = "{{ bag.pk|default:'' }}";
     var suggestedBagName = "{{ bag.name|default:'' }}";
 
-    function showContainerOverride() {
-        document.getElementById('store-suggested-alert').style.display = 'none';
-        document.getElementById('container-override').classList.remove('d-none');
-        document.getElementById('select-different-btn').style.display = 'none';
-    }
-
-    function hideContainerOverride() {
-        document.getElementById('store-suggested-alert').style.display = '';
-        document.getElementById('container-override').classList.add('d-none');
-        document.getElementById('select-different-btn').style.display = '';
-        var noBagAlert = document.getElementById('store-no-bag-alert');
-        if (noBagAlert) noBagAlert.style.display = 'none';
-    }
-
-    document.getElementById('container-override').addEventListener('container-picker:change', function (e) {
+    document.querySelector('.container-picker').addEventListener('container-picker:change', function (e) {
         var isSuggested = suggestedBagId && String(e.detail.value) === String(suggestedBagId);
         document.getElementById('store-target-name').textContent = isSuggested ? suggestedBagName : e.detail.label;
-        hideContainerOverride();
+        document.getElementById('store-suggested-alert').style.display = '';
+        var noBagAlert = document.getElementById('store-no-bag-alert');
+        if (noBagAlert) noBagAlert.style.display = 'none';
     });
 </script>
 {% endblock %}
