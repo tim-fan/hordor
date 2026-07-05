@@ -29,7 +29,7 @@ shown elsewhere on the page):
      data-pinned-value="{{ pinned_option_value|default:'' }}"
      data-start-expanded="{% if start_expanded %}1{% endif %}"
      data-collapsed-label="{{ collapsed_label|default:'' }}">
-    <label>{{ select_field.label }}</label>
+    {% if not collapsed_label %}<label>{{ select_field.label }}</label>{% endif %}
 
     <div class="container-picker-summary">
         <button type="button" class="btn btn-link p-0 container-picker-current"></button>
@@ -56,6 +56,17 @@ shown elsewhere on the page):
 
     .container-picker-list .container-picker-pinned {
         font-style: italic;
+    }
+
+    /* Expanding must be an instant, one-frame reveal -- the only motion
+       should be the mobile keyboard sliding up after search.focus(),
+       not a second, separate animation on top of it. */
+    .container-picker-summary,
+    .container-picker-expanded,
+    .container-picker-list,
+    .container-picker-list .list-group-item {
+        transition: none !important;
+        animation: none !important;
     }
 </style>
 

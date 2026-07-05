@@ -1,10 +1,12 @@
 {% extends 'inventory/base.html' %}
 {% block navbar %}{% endblock %}
 {% block content %}
-<div class="d-flex flex-column" style="height: 100vh; height: 100dvh; overflow: hidden;">
+<form method="post" class="d-flex flex-column" style="height: 100vh; height: 100dvh; overflow: hidden;">
+    {% csrf_token %}
     <div class="px-3 pt-2 flex-shrink-0">
-        <h2 class="mb-1">Store Item: {{ item.name }}</h2>
-        <p class="mb-0"><a href="{% url 'inventory:item_detail' item.id %}">View item details</a></p>
+        <h2 class="mb-2">Store Item: {{ item.name }}</h2>
+        <button type="submit" class="btn btn-primary btn-lg">Confirm Item Stored</button>
+        <a href="{% url 'inventory:item_detail' item.id %}" class="btn btn-secondary btn-lg">Cancel</a>
     </div>
 
     <div class="flex-grow-1 d-flex align-items-center justify-content-center px-3" style="min-height: 0;">
@@ -15,6 +17,8 @@
     </div>
 
     <div class="px-3 pb-3 flex-shrink-0">
+        <p class="mb-2"><a href="{% url 'inventory:item_detail' item.id %}">View item details</a></p>
+
         {% if not bag %}
         <div class="alert alert-warning py-2 mb-2" id="store-no-bag-alert">
             <strong>No empty bags available</strong> &mdash; choose a container below to store this item in.
@@ -23,23 +27,18 @@
 
         <div class="alert alert-info py-2 mb-2" id="store-suggested-alert" {% if not bag %}style="display: none;"{% endif %}>
             <p class="lead mb-1">Put this item in <strong id="store-target-name">{{ bag.name }}</strong></p>
-            <p class="mb-0 small">Once you have physically placed the item there, click confirm below.</p>
+            <p class="mb-0 small">Once you have physically placed the item there, click confirm above.</p>
         </div>
 
-        <form method="post">
-            {% csrf_token %}
-            <div class="mb-2">
-                {% if bag %}
-                {% include "inventory/components/container_picker.html" with select_field=form.container pinned_option_label="Auto select" pinned_option_value=bag.pk collapsed_label="Select different container" %}
-                {% else %}
-                {% include "inventory/components/container_picker.html" with select_field=form.container start_expanded=True collapsed_label="Select different container" %}
-                {% endif %}
-            </div>
-            <button type="submit" class="btn btn-primary btn-lg">Confirm Item Stored</button>
-            <a href="{% url 'inventory:item_detail' item.id %}" class="btn btn-secondary btn-lg">Cancel</a>
-        </form>
+        <div class="mb-2">
+            {% if bag %}
+            {% include "inventory/components/container_picker.html" with select_field=form.container pinned_option_label="Auto select" pinned_option_value=bag.pk collapsed_label="Select different container" %}
+            {% else %}
+            {% include "inventory/components/container_picker.html" with select_field=form.container start_expanded=True collapsed_label="Select different container" %}
+            {% endif %}
+        </div>
     </div>
-</div>
+</form>
 
 <script>
     var suggestedBagId = "{{ bag.pk|default:'' }}";
