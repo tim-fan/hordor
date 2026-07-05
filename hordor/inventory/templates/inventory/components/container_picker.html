@@ -1,0 +1,75 @@
+{% comment %}
+Searchable replacement for a plain <select> of containers, same
+type-to-filter pattern as the item store/retrieve pickers. Renders
+the real Django select hidden and drives its value from JS, so form
+submission/validation is untouched -- include with:
+    {% include "inventory/components/container_picker.html" with select_field=form.container %}
+{% endcomment %}
+<div class="form-group container-picker">
+    <label>{{ select_field.label }}</label>
+    <div class="text-muted small container-picker-current mb-1"></div>
+    <input type="text" class="form-control container-picker-search mb-2"
+           placeholder="Search containers..." autocomplete="off">
+    <div class="list-group container-picker-list" style="max-height: 200px; overflow-y: auto;"></div>
+    <div class="d-none">{{ select_field }}</div>
+</div>
+
+<style>
+    .container-picker-list .list-group-item {
+        cursor: pointer;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .container-picker-list .list-group-item.active {
+        z-index: 1;
+    }
+</style>
+
+<script>
+    (function () {
+        document.querySelectorAll('.container-picker').forEach(function (picker) {
+            if (picker.dataset.picketInit) return;
+            picker.dataset.picketInit = '1';
+
+            var select = picker.querySelector('select');
+            var search = picker.querySelector('.container-picker-search');
+            var list = picker.querySelector('.container-picker-list');
+            var current = picker.querySelector('.container-picker-current');
+
+            var options = Array.from(select.options).map(function (opt) {
+                return { value: opt.value, label: opt.textContent };
+            });
+
+            function updateCurrent() {
+                var selected = options.find(function (o) { return o.value === select.value; });
+                current.textContent = 'Selected: ' + (selected ? selected.label : 'None');
+            }
+
+            function renderList(filter) {
+                list.innerHTML = '';
+                filter = filter.trim().toLowerCase();
+                options.forEach(function (opt) {
+                    if (filter && opt.label.toLowerCase().indexOf(filter) === -1) return;
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'list-group-item list-group-item-action';
+                    btn.textContent = opt.label;
+                    if (opt.value === select.value) btn.classList.add('active');
+                    btn.addEventListener('click', function () {
+                        select.value = opt.value;
+                        updateCurrent();
+                        renderList(search.value);
+                    });
+                    list.appendChild(btn);
+                });
+            }
+
+            search.addEventListener('input', function () {
+                renderList(search.value);
+            });
+
+            updateCurrent();
+            renderList('');
+        });
+    })();
+</script>

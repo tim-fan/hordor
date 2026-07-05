@@ -7,7 +7,15 @@
         <h1>Add New Item</h1>
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
-          {{ form.as_p }}
+          <div class="form-group">
+            <label for="id_name">Name</label>
+            {{ form.name }}
+          </div>
+          <div class="form-group">
+            <label for="id_description">Description</label>
+            {{ form.description }}
+          </div>
+          {% include "inventory/components/container_picker.html" with select_field=form.container %}
           {% include "inventory/components/photo_capture_widget.html" %}
           <button type="submit" name="action" value="store" class="btn btn-primary">Add &amp; Store</button>
           <button type="submit" name="action" value="save" class="btn btn-secondary">Add Only</button>

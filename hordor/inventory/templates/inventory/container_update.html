@@ -6,7 +6,19 @@
       <h1 class="pb-3">Update Container</h1>
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="form-group">
+          <label for="id_name">Name</label>
+          {{ form.name }}
+        </div>
+        <div class="form-group">
+          <label for="id_description">Description</label>
+          {{ form.description }}
+        </div>
+        <div class="form-group">
+          <label for="id_photo">Photo</label>
+          {{ form.photo }}
+        </div>
+        {% include "inventory/components/container_picker.html" with select_field=form.container %}
         <button type="submit" class="btn btn-primary">Update Container</button>
       </form>
     </div>

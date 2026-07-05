@@ -1,60 +1,76 @@
 {% extends 'inventory/base.html' %}
 {% block content %}
-<div class="container">
+<div class="container pt-3">
+  <h1 class="pb-3">{{ item.name }}</h1>
+
+  <h2 class="h5">Photos</h2>
+  <div class="row">
+    {% for photo in item.photos.all %}
+    <div class="col-6 col-md-3 pb-3">
+      <div class="card h-100">
+        <img src="{{ photo.image.url }}" alt="{{ item.name }}" class="card-img-top">
+        <div class="card-body p-2 text-center">
+          {% if photo.pk == item.main_photo_id %}
+          <span class="badge badge-primary d-block mb-1">Main</span>
+          {% endif %}
+          <form method="post" class="btn-group btn-group-sm" role="group">
+            {% csrf_token %}
+            {% if photo.pk != item.main_photo_id %}
+            <button type="submit" formaction="{% url 'inventory:set_main_item_photo' photo.pk %}"
+                    class="btn btn-outline-secondary" title="Set as main photo">&#9733;</button>
+            {% endif %}
+            <button type="submit" formaction="{% url 'inventory:rotate_item_photo' photo.pk %}"
+                    class="btn btn-outline-secondary" title="Rotate">&#8635;</button>
+            <button type="submit" formaction="{% url 'inventory:delete_item_photo' photo.pk %}"
+                    class="btn btn-outline-danger" title="Delete"
+                    onclick="return confirm('Delete this photo?');">&times;</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    <div class="col-6 col-md-3 pb-3">
+      <label for="quick-add-photo-input" class="card h-100 d-flex align-items-center justify-content-center text-center mb-0"
+             style="cursor: pointer; min-height: 120px; border-style: dashed;">
+        <span class="text-muted">+ Add Photo</span>
+      </label>
+    </div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" action="{% url 'inventory:add_item_photos' item.pk %}"
+        id="quick-add-photo-form">
+    {% csrf_token %}
+    <input type="file" name="photos" id="quick-add-photo-input" accept="image/*" capture="camera"
+           multiple class="d-none">
+  </form>
+
+  <hr class="my-4">
+
+  <h2 class="h5">Details</h2>
   <div class="row">
     <div class="col-md-6 col-xs-12">
-      <h1 class="pb-3">Update Item</h1>
-      <form method="post" enctype="multipart/form-data">
+      <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="form-group">
+          <label for="id_name">Name</label>
+          {{ form.name }}
+        </div>
+        <div class="form-group">
+          <label for="id_description">Description</label>
+          {{ form.description }}
+        </div>
+        {% include "inventory/components/container_picker.html" with select_field=form.container %}
         <button type="submit" class="btn btn-primary">Update Item</button>
       </form>
     </div>
   </div>
-
-  <div class="row pt-4">
-    <div class="col-12">
-      <h2 class="pb-3">Photos</h2>
-
-      <div class="row">
-        {% for photo in item.photos.all %}
-        <div class="col-6 col-md-3 pb-3">
-          <div class="card">
-            <img src="{{ photo.image.url }}" alt="{{ item.name }}" class="card-img-top">
-            <div class="card-body p-2">
-              {% if photo.pk == item.main_photo_id %}
-              <span class="badge badge-primary">Main photo</span>
-              {% else %}
-              <form method="post" action="{% url 'inventory:set_main_item_photo' photo.pk %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-secondary">Set as main</button>
-              </form>
-              {% endif %}
-              <form method="post" action="{% url 'inventory:rotate_item_photo' photo.pk %}" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-secondary mt-1">&#8635; Rotate</button>
-              </form>
-              <form method="post" action="{% url 'inventory:delete_item_photo' photo.pk %}"
-                    onsubmit="return confirm('Delete this photo?');" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-danger mt-1">Delete</button>
-              </form>
-            </div>
-          </div>
-        </div>
-        {% empty %}
-        <div class="col-12">
-          <p>No photos yet.</p>
-        </div>
-        {% endfor %}
-      </div>
-
-      <form method="post" enctype="multipart/form-data" action="{% url 'inventory:add_item_photos' item.pk %}">
-        {% csrf_token %}
-        {% include "inventory/components/photo_capture_widget.html" with label="Add photos" help_text=False %}
-        <button type="submit" class="btn btn-secondary">Upload</button>
-      </form>
-    </div>
-  </div>
 </div>
+
+<script>
+    document.getElementById('quick-add-photo-input').addEventListener('change', function () {
+        if (this.files.length > 0) {
+            document.getElementById('quick-add-photo-form').submit();
+        }
+    });
+</script>
 {% endblock %}
