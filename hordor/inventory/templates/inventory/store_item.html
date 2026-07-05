@@ -15,14 +15,30 @@
             {% endif %}
         </div>
         <div class="col-md-6">
-            <div class="alert alert-info">
+            {% if bag %}
+            <div class="alert alert-info" id="store-suggested-alert">
                 <h3>Instructions:</h3>
                 <p class="lead">Put this item in <strong>{{ bag.name }}</strong></p>
-                <p>Once you have physically placed the item in {{ bag.name }}, click the confirm button below.</p>
+                <p>Once you have physically placed the item there, click the confirm button below.</p>
             </div>
+            <button type="button" class="btn btn-link p-0 mb-3"
+                    onclick="document.getElementById('store-suggested-alert').style.display='none';
+                             document.getElementById('container-override').classList.remove('d-none');
+                             this.style.display='none';">
+                Select different container
+            </button>
+            {% else %}
+            <div class="alert alert-warning">
+                <h3>No empty bags available</h3>
+                <p>Choose a container below to store this item in.</p>
+            </div>
+            {% endif %}
 
             <form method="post">
                 {% csrf_token %}
+                <div id="container-override" class="{% if bag %}d-none{% endif %}">
+                    {% include "inventory/components/container_picker.html" with select_field=form.container %}
+                </div>
                 <button type="submit" class="btn btn-primary btn-lg">Confirm Item Stored</button>
                 <a href="{% url 'inventory:item_detail' item.id %}" class="btn btn-secondary btn-lg">Cancel</a>
             </form>

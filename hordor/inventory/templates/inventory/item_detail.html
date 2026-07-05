@@ -3,7 +3,17 @@
 <div class="container pt-3">
     <div class="row">
         <div class="col-12">
-            <h2 class="pb-3">Item: {{ item.name }}</h2>
+            <h2 class="pb-3">{{ item.name }}</h2>
+
+            <div class="pb-3">
+                {% if item.can_be_stored %}
+                <a href="{% url 'inventory:store_item' item.id %}" class="btn btn-primary">Store Item</a>
+                {% elif item.can_be_retrieved %}
+                <a href="{% url 'inventory:retrieve_item' item.id %}" class="btn btn-warning">Retrieve Item</a>
+                {% endif %}
+                <a href="{% url 'inventory:item_update' item.id %}" class="btn btn-secondary">Edit item</a>
+            </div>
+
             {% if item.main_photo %}
             <div class="text-center">
                 <a href="{{ item.main_photo.image.url }}" target="_blank" rel="noopener" id="main-photo-link">
@@ -46,19 +56,21 @@
             thumbEl.classList.add('photo-thumb-selected');
         }
     </script>
+
     {% if item.description != '' %}
-    <div class="row">
+    <div class="row pt-4">
         <div class="col-12">
             <h2>Description:</h2>
             <p>{{ item.description|urlize|linebreaksbr }}</p>
         </div>
     </div>
     {% endif %}
+
     <div class="row pt-4">
-        <div class="col-4">
-            <h3>Stored in:</h3>
+        <div class="col-12">
             {% if item.container %}
-            {% include "inventory/components/container_card.html" with container=item.container%}
+            <h3>Stored in:</h3>
+            {% include "inventory/components/container_card.html" with container=item.container %}
             {% else %}
             <p>Not in a container</p>
             {% endif %}
@@ -67,14 +79,25 @@
 
     <div class="row pt-4">
         <div class="col-12">
-            {% if item.can_be_stored %}
-            <a href="{% url 'inventory:store_item' item.id %}" class="btn btn-primary">Store Item</a>
-            {% elif item.can_be_retrieved %}
-            <a href="{% url 'inventory:retrieve_item' item.id %}" class="btn btn-warning">Retrieve Item</a>
-            {% endif %}
-            <a href="{% url 'inventory:item_update' item.id %}" class="btn btn-secondary">Edit item</a>
+            <h3>Activity</h3>
+            <ul class="list-unstyled">
+                {% for movement in movements %}
+                <li class="pb-1">
+                    <span class="text-muted small">{{ movement.moved_at|date:"Y-m-d H:i" }}</span>
+                    &mdash;
+                    {% if movement.is_new_item %}
+                        {% if movement.to_container %}Created, stored in {{ movement.to_container.name }}
+                        {% else %}Created{% endif %}
+                    {% else %}
+                        {% if movement.to_container %}Moved to {{ movement.to_container.name }}
+                        {% else %}Removed from container{% endif %}
+                    {% endif %}
+                </li>
+                {% empty %}
+                <li class="text-muted">No activity yet.</li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
-
 </div>
 {% endblock %}

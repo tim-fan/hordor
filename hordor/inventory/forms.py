@@ -4,14 +4,9 @@ from .models import Item, Container
 
 class ItemForm(forms.ModelForm):
 
-    container = forms.ModelChoiceField(
-        required=False,
-        empty_label="None",
-        queryset=Container.objects.order_by('-creation_date'))
-
     class Meta:
         model = Item
-        fields = ['name', 'description', 'container']
+        fields = ['name', 'description']
 
         widgets = {
             'name':
@@ -46,3 +41,13 @@ class ContainerForm(forms.ModelForm):
             'photo':
             forms.FileInput(attrs={'capture': 'camera'}),
         }
+
+
+class ContainerSelectForm(forms.Form):
+    """
+    Used on the store-item page to let the user override the
+    auto-suggested container.
+    """
+    container = forms.ModelChoiceField(
+        queryset=Container.objects.order_by('-creation_date'),
+        required=True)

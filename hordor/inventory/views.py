@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.views.decorators.http import require_POST
 from .imaging import rotate_image_field
 from .models import Item, Container, ItemPhoto
-from .forms import ItemForm, ContainerForm
+from .forms import ItemForm, ContainerForm, ContainerSelectForm
 import re
 
 
@@ -74,6 +74,11 @@ def quick_retrieve_view(request):
 
 class ItemDetailView(LoginRequiredMixin, generic.DetailView):
     model = Item
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['movements'] = self.object.itemmovement_set.order_by('-moved_at')
+        return context
 
 
 class ItemListView(LoginRequiredMixin, generic.ListView):
@@ -164,7 +169,7 @@ class NewContainerView(LoginRequiredMixin, generic.CreateView):
 
 class ItemUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Item
-    fields = ['name', 'description', 'container']
+    form_class = ItemForm
     template_name = 'inventory/item_update.html'
 
     def get_success_url(self):
@@ -174,7 +179,7 @@ class ItemUpdateView(LoginRequiredMixin, generic.UpdateView):
 
 class ContainerUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Container
-    fields = ['name', 'description', 'photo', 'container']
+    form_class = ContainerForm
     template_name = 'inventory/container_update.html'
 
     def get_success_url(self):
@@ -185,34 +190,35 @@ class ContainerUpdateView(LoginRequiredMixin, generic.UpdateView):
 @login_required
 def store_item_view(request, pk):
     """
-    Store an item in a bag.
-    GET: Show instruction page with selected bag
+    Store an item. Defaults to the lowest-numbered empty bag; the user
+    can override this via the container picker on this page.
+    GET: Show instruction page with the suggested (or chosen) container
     POST: Update item's container and redirect to item detail
     """
     item = get_object_or_404(Item, pk=pk)
-    
-    # Check if item can be stored
+
     if not item.can_be_stored():
         messages.error(request, "This item cannot be stored.")
         return redirect('inventory:item_detail', pk=pk)
-    
-    # Find the lowest available bag
-    bag = get_lowest_available_bag()
-    if not bag:
-        messages.error(request, "No bags available for storage.")
-        return redirect('inventory:item_detail', pk=pk)
-    
+
+    suggested_bag = get_lowest_available_bag()
+
     if request.method == 'POST':
-        # User confirmed they've stored the item
-        item.container = bag
-        item.save()
-        messages.success(request, f"Item stored in {bag.name}")
-        return redirect('inventory:item_detail', pk=pk)
-    
-    # GET request - show instruction page
+        form = ContainerSelectForm(request.POST)
+        if form.is_valid():
+            container = form.cleaned_data['container']
+            item.container = container
+            item.save()
+            messages.success(request, f"Item stored in {container.name}")
+            return redirect('inventory:item_detail', pk=pk)
+    else:
+        initial = {'container': suggested_bag.pk} if suggested_bag else None
+        form = ContainerSelectForm(initial=initial)
+
     context = {
         'item': item,
-        'bag': bag,
+        'bag': suggested_bag,
+        'form': form,
     }
     return render(request, 'inventory/store_item.html', context)
 
