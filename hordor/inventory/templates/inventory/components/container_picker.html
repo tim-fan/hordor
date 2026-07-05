@@ -4,9 +4,10 @@ type-to-filter pattern as the item store/retrieve pickers. Renders
 the real Django select hidden and drives its value from JS, so form
 submission/validation is untouched.
 
-Starts collapsed, showing just the current selection and a "Change"
-link; tapping it expands the search box + list, which auto-collapses
-again once an option is picked. Include with:
+Starts collapsed: the current selection itself is the tap target
+(e.g. "Bag 14"). Tapping it expands the search box (auto-focused) +
+list, which auto-collapses again once an option is picked. Include
+with:
     {% include "inventory/components/container_picker.html" with select_field=form.container %}
 
 Optionally pin an extra entry at the top of the list (e.g. a
@@ -17,16 +18,21 @@ like picking a real option with that value:
 Pass start_expanded=True to render already expanded (e.g. when there
 is no sensible default to summarize):
     {% include "inventory/components/container_picker.html" with select_field=form.container start_expanded=True %}
+
+Pass collapsed_label to show a fixed action label as the tap target
+instead of the current selection (e.g. when the selection is already
+shown elsewhere on the page):
+    {% include "inventory/components/container_picker.html" with select_field=form.container collapsed_label="Select different container" %}
 {% endcomment %}
 <div class="form-group container-picker"
      data-pinned-label="{{ pinned_option_label|default:'' }}"
      data-pinned-value="{{ pinned_option_value|default:'' }}"
-     data-start-expanded="{% if start_expanded %}1{% endif %}">
+     data-start-expanded="{% if start_expanded %}1{% endif %}"
+     data-collapsed-label="{{ collapsed_label|default:'' }}">
     <label>{{ select_field.label }}</label>
 
     <div class="container-picker-summary">
-        <span class="container-picker-current text-muted"></span>
-        <button type="button" class="btn btn-link btn-sm p-0 ml-2 container-picker-change-btn">Change</button>
+        <button type="button" class="btn btn-link p-0 container-picker-current"></button>
     </div>
 
     <div class="container-picker-expanded d-none">
@@ -65,7 +71,7 @@ is no sensible default to summarize):
             var current = picker.querySelector('.container-picker-current');
             var summary = picker.querySelector('.container-picker-summary');
             var expandedSection = picker.querySelector('.container-picker-expanded');
-            var changeBtn = picker.querySelector('.container-picker-change-btn');
+            var collapsedLabel = picker.dataset.collapsedLabel;
 
             var options = Array.from(select.options).map(function (opt) {
                 return { value: opt.value, label: opt.textContent };
@@ -77,6 +83,10 @@ is no sensible default to summarize):
             }
 
             function updateCurrent() {
+                if (collapsedLabel) {
+                    current.textContent = collapsedLabel;
+                    return;
+                }
                 // Prefer a non-pinned match: the pinned entry (e.g. "Auto
                 // select") shares its value with a real option, but the
                 // summary should show the actual container name, not the
@@ -114,6 +124,7 @@ is no sensible default to summarize):
                 expandedSection.classList.remove('d-none');
                 search.value = '';
                 renderList('');
+                search.focus();
             }
 
             function collapse() {
@@ -121,7 +132,7 @@ is no sensible default to summarize):
                 summary.classList.remove('d-none');
             }
 
-            changeBtn.addEventListener('click', expand);
+            current.addEventListener('click', expand);
             search.addEventListener('input', function () {
                 renderList(search.value);
             });
