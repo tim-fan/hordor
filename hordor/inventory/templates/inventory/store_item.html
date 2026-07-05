@@ -4,7 +4,10 @@
 <form method="post" class="d-flex flex-column" style="height: 100vh; height: 100dvh; overflow: hidden;">
     {% csrf_token %}
     <div class="px-3 pt-2 pb-3 flex-shrink-0">
-        <h2 class="mb-3">Store Item: {{ item.name }}</h2>
+        <h2 class="mb-1">Store {{ item.name }}</h2>
+        <h4 class="mb-3 text-muted" id="store-target-line" {% if not bag %}style="display: none;"{% endif %}>
+            &rarr; <span id="store-target-name">{{ bag.name }}</span> &#128230;
+        </h4>
         <div class="d-flex">
             <button type="submit" class="btn btn-primary btn-lg mr-2">Confirm Item Stored</button>
             <a href="{% url 'inventory:item_detail' item.id %}" class="btn btn-secondary btn-lg">Cancel</a>
@@ -26,7 +29,6 @@
         {% endif %}
 
         <div class="alert alert-info py-2 mb-2" id="store-suggested-alert" {% if not bag %}style="display: none;"{% endif %}>
-            <p class="lead mb-1">Put this item in <strong id="store-target-name">{{ bag.name }}</strong></p>
             <p class="mb-0 small">Once you have physically placed the item there, click confirm above.</p>
         </div>
 
@@ -49,6 +51,7 @@
     document.querySelector('.container-picker').addEventListener('container-picker:change', function (e) {
         var isSuggested = suggestedBagId && String(e.detail.value) === String(suggestedBagId);
         document.getElementById('store-target-name').textContent = isSuggested ? suggestedBagName : e.detail.label;
+        document.getElementById('store-target-line').style.display = '';
         document.getElementById('store-suggested-alert').style.display = '';
         var noBagAlert = document.getElementById('store-no-bag-alert');
         if (noBagAlert) noBagAlert.style.display = 'none';
