@@ -1,7 +1,7 @@
 {% extends 'inventory/base.html' %}
 {% block navbar %}{% endblock %}
 {% block content %}
-<div class="d-flex flex-column" style="height: 100vh; overflow: hidden;">
+<div class="d-flex flex-column" style="height: 100vh; height: 100dvh; overflow: hidden;">
     <div class="px-3 pt-2 flex-shrink-0">
         <h2 class="mb-1">Store Item: {{ item.name }}</h2>
         <p class="mb-0"><a href="{% url 'inventory:item_detail' item.id %}">View item details</a></p>
@@ -15,26 +15,31 @@
     </div>
 
     <div class="px-3 pb-3 flex-shrink-0">
-        {% if bag %}
-        <div class="alert alert-info py-2 mb-2" id="store-suggested-alert">
-            <p class="lead mb-1">Put this item in <strong>{{ bag.name }}</strong></p>
-            <p class="mb-0 small">Once you have physically placed the item there, click confirm below.</p>
-        </div>
-        <button type="button" class="btn btn-link p-0 mb-2"
-                onclick="document.getElementById('store-suggested-alert').style.display='none';
-                         document.getElementById('container-override').classList.remove('d-none');
-                         this.style.display='none';">
-            Select different container
-        </button>
-        {% else %}
-        <div class="alert alert-warning py-2 mb-2">
+        {% if not bag %}
+        <div class="alert alert-warning py-2 mb-2" id="store-no-bag-alert">
             <strong>No empty bags available</strong> &mdash; choose a container below to store this item in.
         </div>
         {% endif %}
 
+        <div class="alert alert-info py-2 mb-2" id="store-suggested-alert" {% if not bag %}style="display: none;"{% endif %}>
+            <p class="lead mb-1">Put this item in <strong id="store-target-name">{{ bag.name }}</strong></p>
+            <p class="mb-0 small">Once you have physically placed the item there, click confirm below.</p>
+        </div>
+
+        <div class="mb-2">
+            <button type="button" class="btn btn-link p-0 mr-3" id="select-different-btn"
+                    onclick="showContainerOverride();" {% if not bag %}style="display: none;"{% endif %}>
+                Select different container
+            </button>
+            <button type="button" class="btn btn-link p-0 d-none" id="auto-select-btn"
+                    onclick="revertToAutoSelect();">
+                Auto select
+            </button>
+        </div>
+
         <form method="post">
             {% csrf_token %}
-            <div id="container-override" class="{% if bag %}d-none{% endif %}">
+            <div id="container-override" class="{% if bag %}d-none{% endif %} mb-2">
                 {% include "inventory/components/container_picker.html" with select_field=form.container %}
             </div>
             <button type="submit" class="btn btn-primary btn-lg">Confirm Item Stored</button>
@@ -42,4 +47,42 @@
         </form>
     </div>
 </div>
+
+<script>
+    var suggestedBagId = "{{ bag.pk|default:'' }}";
+
+    function showContainerOverride() {
+        document.getElementById('store-suggested-alert').style.display = 'none';
+        document.getElementById('container-override').classList.remove('d-none');
+        document.getElementById('select-different-btn').style.display = 'none';
+    }
+
+    function hideContainerOverride() {
+        document.getElementById('store-suggested-alert').style.display = '';
+        document.getElementById('container-override').classList.add('d-none');
+        document.getElementById('select-different-btn').style.display = '';
+        var noBagAlert = document.getElementById('store-no-bag-alert');
+        if (noBagAlert) noBagAlert.style.display = 'none';
+    }
+
+    function revertToAutoSelect() {
+        var select = document.querySelector('#container-override select');
+        select.value = suggestedBagId;
+        document.getElementById('store-target-name').textContent = "{{ bag.name|default:'' }}";
+        document.getElementById('auto-select-btn').classList.add('d-none');
+        hideContainerOverride();
+    }
+
+    document.getElementById('container-override').addEventListener('container-picker:change', function (e) {
+        document.getElementById('store-target-name').textContent = e.detail.label;
+        hideContainerOverride();
+
+        var autoBtn = document.getElementById('auto-select-btn');
+        if (suggestedBagId && String(e.detail.value) !== String(suggestedBagId)) {
+            autoBtn.classList.remove('d-none');
+        } else {
+            autoBtn.classList.add('d-none');
+        }
+    });
+</script>
 {% endblock %}

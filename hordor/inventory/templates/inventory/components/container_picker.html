@@ -59,6 +59,10 @@ submission/validation is untouched -- include with:
                         select.value = opt.value;
                         updateCurrent();
                         renderList(search.value);
+                        picker.dispatchEvent(new CustomEvent('container-picker:change', {
+                            detail: { value: opt.value, label: opt.label },
+                            bubbles: true
+                        }));
                     });
                     list.appendChild(btn);
                 });
