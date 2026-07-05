@@ -23,13 +23,17 @@ Pass collapsed_label to show a fixed action label as the tap target
 instead of the current selection (e.g. when the selection is already
 shown elsewhere on the page):
     {% include "inventory/components/container_picker.html" with select_field=form.container collapsed_label="Select different container" %}
+
+Pass hide_label=True to suppress the field label entirely (e.g. when
+embedding inside a modal that already has its own title):
+    {% include "inventory/components/container_picker.html" with select_field=form.container start_expanded=True hide_label=True %}
 {% endcomment %}
 <div class="form-group container-picker"
      data-pinned-label="{{ pinned_option_label|default:'' }}"
      data-pinned-value="{{ pinned_option_value|default:'' }}"
      data-start-expanded="{% if start_expanded %}1{% endif %}"
      data-collapsed-label="{{ collapsed_label|default:'' }}">
-    {% if not collapsed_label %}<label>{{ select_field.label }}</label>{% endif %}
+    {% if not collapsed_label and not hide_label %}<label>{{ select_field.label }}</label>{% endif %}
 
     <div class="container-picker-summary">
         <button type="button" class="btn btn-link p-0 container-picker-current"></button>
