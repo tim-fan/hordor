@@ -124,16 +124,28 @@ class ItemListView(LoginRequiredMixin, generic.ListView):
 class ItemTableView(LoginRequiredMixin, generic.ListView):
     template_name = "inventory/item_table.html"
 
-    def show_dispossessed(self):
-        return self.request.GET.get('show_dispossessed') == '1'
+    def get_container_filter(self):
+        return self.request.GET.get('container', '')
 
     def get_queryset(self):
         items = Item.objects.annotate(
             last_moved=Max('itemmovement__moved_at'),
             movement_count=Count('itemmovement'),
         ).order_by('-last_moved')
-        if self.show_dispossessed():
-            return items
+
+        container_filter = self.get_container_filter()
+        if container_filter == 'none':
+            return items.filter(container__isnull=True)
+        if container_filter == 'dispossessed':
+            try:
+                dispossessed = Container.objects.get(name__iexact="dispossessed")
+                return items.filter(container=dispossessed)
+            except Container.DoesNotExist:
+                return items.none()
+        if container_filter:
+            return items.filter(container_id=container_filter)
+
+        # No filter: default to hiding dispossessed items.
         try:
             dispossessed = Container.objects.get(name__iexact="dispossessed")
             return items.exclude(container=dispossessed)
@@ -142,7 +154,8 @@ class ItemTableView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['show_dispossessed'] = self.show_dispossessed()
+        context['container_filter'] = self.get_container_filter()
+        context['containers'] = Container.objects.order_by('-creation_date')
         now = timezone.now()
         for item in context['item_list']:
             age_days = max((now - item.creation_date).days, 1)

@@ -198,11 +198,17 @@
                 </tbody>
             </table>
 
-            <div class="form-check pt-2">
-                <input class="form-check-input" type="checkbox" id="show-dispossessed"
-                       {% if show_dispossessed %}checked{% endif %}
-                       onchange="window.location = this.checked ? '?show_dispossessed=1' : window.location.pathname">
-                <label class="form-check-label" for="show-dispossessed">Show dispossessed</label>
+            <div class="form-group pt-2" style="max-width: 300px;">
+                <label for="container-filter" class="small text-muted mb-1">Filter by container</label>
+                <select id="container-filter" class="form-control"
+                        onchange="window.location = this.value ? '?container=' + encodeURIComponent(this.value) : window.location.pathname">
+                    <option value="" {% if not container_filter %}selected{% endif %}>All (excluding dispossessed)</option>
+                    <option value="none" {% if container_filter == 'none' %}selected{% endif %}>None (not in a container)</option>
+                    <option value="dispossessed" {% if container_filter == 'dispossessed' %}selected{% endif %}>Dispossessed</option>
+                    {% for c in containers %}
+                    <option value="{{ c.pk }}" {% if container_filter == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
     </div>
