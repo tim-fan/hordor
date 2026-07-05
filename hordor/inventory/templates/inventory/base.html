@@ -90,6 +90,31 @@
         [data-toggle="collapse"].collapsed .fa:before {
             content: "\f13a";
         }
+
+        /* Desktop: brand / store-retrieve-browse / items-containers-new as
+           three equal-width regions, so the middle group is truly centered
+           regardless of how much wider the left/right content is. */
+        @media (min-width: 992px) {
+            .navbar-3col-left,
+            .navbar-3col-center,
+            .navbar-3col-right {
+                display: flex;
+                align-items: center;
+                flex: 1 1 0;
+            }
+
+            .navbar-3col-left {
+                justify-content: flex-start;
+            }
+
+            .navbar-3col-center {
+                justify-content: center;
+            }
+
+            .navbar-3col-right {
+                justify-content: flex-end;
+            }
+        }
     </style>
 </head>
 
@@ -97,36 +122,42 @@
     {% block navbar %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light ">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'inventory:index' %}">Hordor</a>
+            <div class="navbar-3col-left">
+                <a class="navbar-brand" href="{% url 'inventory:index' %}">Hordor</a>
+            </div>
 
-            <a href="{% url 'inventory:quick_store' %}" class="btn btn-primary btn-sm mr-1">Store</a>
-            <a href="{% url 'inventory:quick_retrieve' %}" class="btn btn-warning btn-sm mr-1">Retrieve</a>
-            <a href="{% url 'inventory:item_table' %}" class="btn btn-secondary btn-sm mr-2">Browse</a>
+            <div class="navbar-3col-center">
+                <a href="{% url 'inventory:quick_store' %}" class="btn btn-primary btn-sm mr-1">Store</a>
+                <a href="{% url 'inventory:quick_retrieve' %}" class="btn btn-warning btn-sm mr-1">Retrieve</a>
+                <a href="{% url 'inventory:item_table' %}" class="btn btn-secondary btn-sm">Browse</a>
+            </div>
 
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'inventory:item_list' %}">Items</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'inventory:container_tree' %}">Containers</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            New
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{% url 'inventory:new_item' %}">Item</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{% url 'inventory:new_container' %}">Container</a>
-                        </div>
-                    </li>
-                </ul>
+            <div class="navbar-3col-right">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'inventory:item_list' %}">Items</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'inventory:container_tree' %}">Containers</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                New
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{% url 'inventory:new_item' %}">Item</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'inventory:new_container' %}">Container</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
