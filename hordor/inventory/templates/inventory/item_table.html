@@ -160,7 +160,7 @@
                 <label for="container-filter" class="small text-muted mb-1">Container filter</label>
                 <select id="container-filter" class="form-control"
                         onchange="window.location = this.value ? '?container=' + encodeURIComponent(this.value) : window.location.pathname">
-                    <option value="" {% if not container_filter %}selected{% endif %}>None</option>
+                    <option value="" {% if not container_filter %}selected{% endif %} style="font-style: italic;">No filter</option>
                     <option value="none" {% if container_filter == 'none' %}selected{% endif %}>Not in a container</option>
                     <option value="dispossessed" {% if container_filter == 'dispossessed' %}selected{% endif %}>Dispossessed</option>
                     {% for c in containers %}
