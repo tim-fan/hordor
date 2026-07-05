@@ -1,7 +1,10 @@
 {% extends 'inventory/base.html' %}
+{% load static %}
 {% block content %}
 <div class="container pt-3">
-    <h1 class="pb-3">Overview</h1>
+    <div class="text-center pb-3">
+        <img src="{% static 'inventory/images/hordor.png' %}" alt="Hordor" style="max-height: 150px;">
+    </div>
 
     <div class="row text-center pb-4">
         <div class="col-6 col-md-3 pb-3">
