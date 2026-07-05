@@ -5,6 +5,7 @@ from . import views
 app_name = "inventory"
 urlpatterns = [
     path('', views.DashboardView.as_view(), name="index"),
+    path('share/<str:token>/', views.share_login_view, name='share_login'),
     path('store/', views.quick_store_view, name='quick_store'),
     path('retrieve/', views.quick_retrieve_view, name='quick_retrieve'),
     path('<int:pk>/item', views.ItemDetailView.as_view(), name='item_detail'),

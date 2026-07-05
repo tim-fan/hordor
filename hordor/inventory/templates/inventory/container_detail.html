@@ -35,7 +35,9 @@
             {% else %}
             <p>Not in a container</p>
             {% endif %}
+            {% if not is_readonly_visitor %}
             <a href="{% url 'inventory:container_update' container.id %}">Edit Container</a>
+            {% endif %}
         </div>
     </div>
 </div>

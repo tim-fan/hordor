@@ -1,3 +1,5 @@
+import secrets
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import post_delete
@@ -144,6 +146,28 @@ def cleanup_deleted_photo(sender, instance, **kwargs):
         if replacement is not None:
             owner.main_photo = replacement
             owner.save(update_fields=['main_photo'])
+
+
+def _generate_share_token():
+    return secrets.token_urlsafe(24)
+
+
+class ShareLink(models.Model):
+    """
+    A shareable, time-limited, read-only link. Visiting /share/<token>/
+    logs the browser in as the dedicated read-only viewer account;
+    deleting a ShareLink row revokes it immediately (checked on every
+    request by ReadOnlyShareMiddleware), independent of session lifetime.
+    """
+    token = models.CharField(max_length=64, unique=True, default=_generate_share_token)
+    created_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField()
+
+    def is_expired(self):
+        return timezone.now() >= self.expires_at
+
+    def __str__(self):
+        return f"Share link created {self.created_at:%Y-%m-%d}, expires {self.expires_at:%Y-%m-%d}"
 
 
 class ItemMovement(models.Model):

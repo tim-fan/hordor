@@ -4,12 +4,15 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views import generic
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from .imaging import rotate_image_field
-from .models import Item, Container, Photo, ItemMovement
+from .middleware import SHARE_VIEWER_USERNAME
+from .models import Item, Container, Photo, ItemMovement, ShareLink
 from .forms import ItemForm, ContainerForm, ContainerSelectForm
 import re
 
@@ -408,3 +411,25 @@ def rotate_photo_view(request, photo_pk):
     rotate_image_field(photo.image, degrees=-90)
     photo.save(update_fields=['image'])
     return redirect(_update_url_name(owner), pk=owner.pk)
+
+
+def share_login_view(request, token):
+    """
+    Public entry point for a read-only share link (no @login_required --
+    that's the point). Logs the browser in as the dedicated read-only
+    viewer account, scoped to this ShareLink's remaining lifetime.
+    """
+    link = ShareLink.objects.filter(token=token).first()
+    if link is None or link.is_expired():
+        return render(request, 'inventory/share_expired.html', status=404)
+
+    viewer, _ = User.objects.get_or_create(username=SHARE_VIEWER_USERNAME)
+    if viewer.has_usable_password():
+        viewer.set_unusable_password()
+        viewer.save(update_fields=['password'])
+
+    login(request, viewer)
+    request.session['share_token'] = token
+    request.session.set_expiry(int((link.expires_at - timezone.now()).total_seconds()))
+
+    return redirect('inventory:index')
