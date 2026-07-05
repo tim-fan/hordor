@@ -61,9 +61,9 @@
 
         <div class="mb-2">
             {% if bag %}
-            {% include "inventory/components/container_picker.html" with select_field=form.container pinned_option_label="Auto select" pinned_option_value=bag.pk collapsed_label="Select different container" %}
+            {% include "inventory/components/container_picker.html" with select_field=form.container pinned_option_label="Auto select" pinned_option_value=bag.pk collapsed_label="Change container" %}
             {% else %}
-            {% include "inventory/components/container_picker.html" with select_field=form.container start_expanded=True collapsed_label="Select different container" %}
+            {% include "inventory/components/container_picker.html" with select_field=form.container start_expanded=True collapsed_label="Change container" %}
             {% endif %}
         </div>
     </div>
