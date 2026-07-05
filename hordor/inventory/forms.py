@@ -48,4 +48,5 @@ class ContainerSelectForm(forms.Form):
     """
     container = forms.ModelChoiceField(
         queryset=Container.objects.order_by('-creation_date'),
-        required=True)
+        required=True,
+        empty_label=None)

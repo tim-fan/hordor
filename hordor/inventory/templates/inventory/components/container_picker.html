@@ -4,8 +4,15 @@ type-to-filter pattern as the item store/retrieve pickers. Renders
 the real Django select hidden and drives its value from JS, so form
 submission/validation is untouched -- include with:
     {% include "inventory/components/container_picker.html" with select_field=form.container %}
+
+Optionally pin an extra entry at the top of the list (e.g. a
+"shortcut to the suggested value" option) whose click behaves exactly
+like picking a real option with that value:
+    {% include "inventory/components/container_picker.html" with select_field=form.container pinned_option_label="Auto select" pinned_option_value=bag.pk %}
 {% endcomment %}
-<div class="form-group container-picker">
+<div class="form-group container-picker"
+     data-pinned-label="{{ pinned_option_label|default:'' }}"
+     data-pinned-value="{{ pinned_option_value|default:'' }}">
     <label>{{ select_field.label }}</label>
     <div class="text-muted small container-picker-current mb-1"></div>
     <input type="text" class="form-control container-picker-search mb-2"
@@ -22,6 +29,10 @@ submission/validation is untouched -- include with:
 
     .container-picker-list .list-group-item.active {
         z-index: 1;
+    }
+
+    .container-picker-list .container-picker-pinned {
+        font-style: italic;
     }
 </style>
 
@@ -40,6 +51,11 @@ submission/validation is untouched -- include with:
                 return { value: opt.value, label: opt.textContent };
             });
 
+            var pinnedLabel = picker.dataset.pinnedLabel;
+            if (pinnedLabel) {
+                options.unshift({ value: picker.dataset.pinnedValue, label: pinnedLabel, pinned: true });
+            }
+
             function updateCurrent() {
                 var selected = options.find(function (o) { return o.value === select.value; });
                 current.textContent = 'Selected: ' + (selected ? selected.label : 'None');
@@ -52,7 +68,7 @@ submission/validation is untouched -- include with:
                     if (filter && opt.label.toLowerCase().indexOf(filter) === -1) return;
                     var btn = document.createElement('button');
                     btn.type = 'button';
-                    btn.className = 'list-group-item list-group-item-action';
+                    btn.className = 'list-group-item list-group-item-action' + (opt.pinned ? ' container-picker-pinned' : '');
                     btn.textContent = opt.label;
                     if (opt.value === select.value) btn.classList.add('active');
                     btn.addEventListener('click', function () {

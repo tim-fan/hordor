@@ -26,21 +26,19 @@
             <p class="mb-0 small">Once you have physically placed the item there, click confirm below.</p>
         </div>
 
-        <div class="mb-2">
-            <button type="button" class="btn btn-link p-0 mr-3" id="select-different-btn"
-                    onclick="showContainerOverride();" {% if not bag %}style="display: none;"{% endif %}>
-                Select different container
-            </button>
-            <button type="button" class="btn btn-link p-0 d-none" id="auto-select-btn"
-                    onclick="revertToAutoSelect();">
-                Auto select
-            </button>
-        </div>
+        <button type="button" class="btn btn-link p-0 mb-2" id="select-different-btn"
+                onclick="showContainerOverride();" {% if not bag %}style="display: none;"{% endif %}>
+            Select different container
+        </button>
 
         <form method="post">
             {% csrf_token %}
             <div id="container-override" class="{% if bag %}d-none{% endif %} mb-2">
+                {% if bag %}
+                {% include "inventory/components/container_picker.html" with select_field=form.container pinned_option_label="Auto select" pinned_option_value=bag.pk %}
+                {% else %}
                 {% include "inventory/components/container_picker.html" with select_field=form.container %}
+                {% endif %}
             </div>
             <button type="submit" class="btn btn-primary btn-lg">Confirm Item Stored</button>
             <a href="{% url 'inventory:item_detail' item.id %}" class="btn btn-secondary btn-lg">Cancel</a>
@@ -50,6 +48,7 @@
 
 <script>
     var suggestedBagId = "{{ bag.pk|default:'' }}";
+    var suggestedBagName = "{{ bag.name|default:'' }}";
 
     function showContainerOverride() {
         document.getElementById('store-suggested-alert').style.display = 'none';
@@ -65,24 +64,10 @@
         if (noBagAlert) noBagAlert.style.display = 'none';
     }
 
-    function revertToAutoSelect() {
-        var select = document.querySelector('#container-override select');
-        select.value = suggestedBagId;
-        document.getElementById('store-target-name').textContent = "{{ bag.name|default:'' }}";
-        document.getElementById('auto-select-btn').classList.add('d-none');
-        hideContainerOverride();
-    }
-
     document.getElementById('container-override').addEventListener('container-picker:change', function (e) {
-        document.getElementById('store-target-name').textContent = e.detail.label;
+        var isSuggested = suggestedBagId && String(e.detail.value) === String(suggestedBagId);
+        document.getElementById('store-target-name').textContent = isSuggested ? suggestedBagName : e.detail.label;
         hideContainerOverride();
-
-        var autoBtn = document.getElementById('auto-select-btn');
-        if (suggestedBagId && String(e.detail.value) !== String(suggestedBagId)) {
-            autoBtn.classList.remove('d-none');
-        } else {
-            autoBtn.classList.add('d-none');
-        }
     });
 </script>
 {% endblock %}
