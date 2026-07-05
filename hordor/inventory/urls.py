@@ -11,6 +11,7 @@ urlpatterns = [
     path('<int:pk>/item/update',
          views.ItemUpdateView.as_view(),
          name='item_update'),
+    path('<int:pk>/item/delete', views.delete_item_view, name='delete_item'),
     path('<int:pk>/item/store', views.store_item_view, name='store_item'),
     path('<int:pk>/item/retrieve', views.retrieve_item_view, name='retrieve_item'),
     path('<int:pk>/item/photos/add', views.add_item_photos_view, name='add_item_photos'),

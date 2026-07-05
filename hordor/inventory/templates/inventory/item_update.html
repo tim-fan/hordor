@@ -25,5 +25,38 @@
       </form>
     </div>
   </div>
+
+  <hr class="my-4">
+
+  <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteItemModal">
+    Delete Item
+  </button>
+
+  <div class="modal fade" id="deleteItemModal" tabindex="-1" role="dialog" aria-labelledby="deleteItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteItemModalLabel">Delete &ldquo;{{ item.name }}&rdquo;?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>This permanently deletes the item, its photos, and its movement history. This cannot be undone.</p>
+          <p class="text-muted small mb-0">
+            If this item still physically exists but you no longer want to track it,
+            consider storing it in the &ldquo;Dispossessed&rdquo; container instead of deleting it.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <form method="post" action="{% url 'inventory:delete_item' item.pk %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete Item</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

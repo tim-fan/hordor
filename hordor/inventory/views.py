@@ -249,6 +249,16 @@ class ItemUpdateView(LoginRequiredMixin, generic.UpdateView):
                             kwargs={'pk': self.kwargs['pk']})
 
 
+@login_required
+@require_POST
+def delete_item_view(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    name = item.name
+    item.delete()
+    messages.success(request, f'Deleted "{name}".')
+    return redirect('inventory:index')
+
+
 class ContainerUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Container
     form_class = ContainerForm
