@@ -69,10 +69,10 @@
     <div class="row pt-4">
         <div class="col-12">
             {% if item.container %}
-            <h3>Stored in:</h3>
+            <h3>&#128230; Stored in:</h3>
             {% include "inventory/components/container_card.html" with container=item.container %}
             {% else %}
-            <p>Not in a container</p>
+            <p>&#128230; Not in a container</p>
             {% endif %}
         </div>
     </div>
