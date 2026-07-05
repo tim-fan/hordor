@@ -29,16 +29,13 @@
         <div class="col">
             <h3>Stored in:</h3>
             {% if container.container %}
-            <li>Container <a
+            <p>Container <a
                     href="{% url 'inventory:container_detail' container.container.id %}">{{ container.container.name }}</a>
-            </li>
+            </p>
             {% else %}
-            <li>Not in a container</li>
+            <p>Not in a container</p>
             {% endif %}
-            <br />
             <a href="{% url 'inventory:container_update' container.id %}">Edit Container</a>
-            <br />
-
         </div>
     </div>
 </div>

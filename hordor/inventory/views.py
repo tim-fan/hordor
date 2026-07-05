@@ -51,17 +51,6 @@ def get_lowest_available_bag():
 
 
 @login_required
-def index(request):
-    item_list = Item.objects.order_by('-creation_date')[:10]
-    container_list = Container.objects.order_by('-creation_date')
-    context = {
-        'item_list': item_list,
-        'container_list': container_list,
-    }
-    return render(request, 'inventory/index.html', context)
-
-
-@login_required
 def quick_store_view(request):
     """
     Fast picker for storing an item: shows all storable items, most

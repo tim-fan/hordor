@@ -3,9 +3,8 @@
         {% if item.main_photo %}
         <img class="card-img-top" src="{{ item.main_photo.image.url }}" alt="{{ item.name }}" />
         {% else %}
-        <img class="card-img-top"
-            src="https://img.pngio.com/box-icon-png-411372-free-icons-library-box-icon-png-981_948.jpg"
-            alt="item without photo">
+        <div class="card-img-top d-flex align-items-center justify-content-center text-muted"
+             style="height: 150px; background: #eee;">No photo</div>
         {% endif %}
         <div class="card-header">{{ item.name }}</div>
     </a>
