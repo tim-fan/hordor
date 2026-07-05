@@ -1,14 +1,39 @@
 {% extends 'inventory/base.html' %}
 {% block navbar %}{% endblock %}
 {% block content %}
+<style>
+    .flow-card {
+        display: inline-block;
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    .flow-arrow {
+        font-size: 1.5rem;
+        line-height: 1.2;
+    }
+</style>
+
 <form method="post" class="d-flex flex-column" style="height: 100vh; height: 100dvh; overflow: hidden;">
     {% csrf_token %}
-    <div class="px-3 pt-2 pb-3 flex-shrink-0">
-        <h2 class="mb-1">Store {{ item.name }}</h2>
-        <h4 class="mb-3 text-muted" id="store-target-line" {% if not bag %}style="display: none;"{% endif %}>
-            &rarr; <span id="store-target-name">{{ bag.name }}</span> &#128230;
-        </h4>
-        <div class="d-flex">
+    <div class="px-3 pt-2 pb-2 flex-shrink-0 text-center">
+        <h5 class="text-muted mb-2">Store Item</h5>
+
+        <div class="flow-card">
+            <strong>{{ item.name }}</strong>
+        </div>
+
+        <div id="store-target-wrapper" {% if not bag %}style="display: none;"{% endif %}>
+            <div class="flow-arrow text-primary">&darr;</div>
+            <div class="flow-card bg-light">
+                <span id="store-target-name">{{ bag.name }}</span> &#128230;
+            </div>
+        </div>
+
+        <div class="mt-3 d-flex justify-content-center">
             <button type="submit" class="btn btn-primary btn-lg mr-2">Confirm Item Stored</button>
             <a href="{% url 'inventory:item_detail' item.id %}" class="btn btn-secondary btn-lg">Cancel</a>
         </div>
@@ -51,7 +76,7 @@
     document.querySelector('.container-picker').addEventListener('container-picker:change', function (e) {
         var isSuggested = suggestedBagId && String(e.detail.value) === String(suggestedBagId);
         document.getElementById('store-target-name').textContent = isSuggested ? suggestedBagName : e.detail.label;
-        document.getElementById('store-target-line').style.display = '';
+        document.getElementById('store-target-wrapper').style.display = '';
         document.getElementById('store-suggested-alert').style.display = '';
         var noBagAlert = document.getElementById('store-no-bag-alert');
         if (noBagAlert) noBagAlert.style.display = 'none';
