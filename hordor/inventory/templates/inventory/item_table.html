@@ -146,13 +146,6 @@
 <div class="container-fluid px-2 px-md-3">
     <div class="row">
         <div class="col-12">
-            <div class="form-check pb-2">
-                <input class="form-check-input" type="checkbox" id="show-dispossessed"
-                       {% if show_dispossessed %}checked{% endif %}
-                       onchange="window.location = this.checked ? '?show_dispossessed=1' : window.location.pathname">
-                <label class="form-check-label" for="show-dispossessed">Show dispossessed</label>
-            </div>
-
             <select id="mobile-sort-select" class="form-control mobile-only mb-2">
                 <option value="3,desc">Sort: Recently updated</option>
                 <option value="0,asc">Sort: Name (A-Z)</option>
@@ -204,6 +197,13 @@
                     {% endfor %}
                 </tbody>
             </table>
+
+            <div class="form-check pt-2">
+                <input class="form-check-input" type="checkbox" id="show-dispossessed"
+                       {% if show_dispossessed %}checked{% endif %}
+                       onchange="window.location = this.checked ? '?show_dispossessed=1' : window.location.pathname">
+                <label class="form-check-label" for="show-dispossessed">Show dispossessed</label>
+            </div>
         </div>
     </div>
 </div>
