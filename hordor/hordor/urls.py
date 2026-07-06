@@ -17,10 +17,12 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import RedirectView
 
 from . import views
 
 urlpatterns = [
+    path('', RedirectView.as_view(pattern_name='inventory:index', permanent=False)),
     re_path(r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:], views.protected_serve,
         {'document_root': settings.MEDIA_ROOT}),
     path('inventory/', include('inventory.urls')),
