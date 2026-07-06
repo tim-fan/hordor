@@ -7,7 +7,7 @@ Image=localhost/hordor:latest
 PublishPort=127.0.0.1:8000:8000
 Volume=%h/projects/20240505_hodor_small_object_store/hordor/hordor/db.sqlite3:/app/hordor/db.sqlite3:Z
 Volume=%h/projects/20240505_hodor_small_object_store/hordor/hordor/media:/app/hordor/media:Z
-EnvironmentFile=%h/projects/20240505_hodor_small_object_store/hordor_secrets.env
+EnvironmentFile=%h/projects/20240505_hodor_small_object_store/hordor_secrets.container.env
 
 [Service]
 Restart=always
