@@ -80,12 +80,12 @@
 
         <div class="flow-card bg-light flow-card-clickable flow-card-equal" data-toggle="modal" data-target="#containerPickerModal">
             {% if bag.main_photo %}
-            <div class="flow-card-photo-image" id="store-target-photo">
+            <div class="flow-card-photo-image">
                 <img src="{{ bag.main_photo.image.url }}" alt="{{ bag.name }}">
             </div>
             {% endif %}
             <div class="flow-card-photo-footer">
-                <div><span id="store-target-name">{{ bag.name|default:"Choose a container" }}</span> &#128230;</div>
+                <div>{{ bag.name|default:"Choose a container" }} &#128230;</div>
                 <div class="small text-primary">Change</div>
             </div>
         </div>
@@ -94,7 +94,7 @@
 
     <div class="px-3 pb-3 flex-shrink-0">
         {% if not bag %}
-        <div class="alert alert-warning py-2 mb-2" id="store-no-bag-alert">
+        <div class="alert alert-warning py-2 mb-2">
             <strong>No empty bags available</strong> &mdash; choose a container above to store this item in.
         </div>
         {% endif %}
@@ -119,8 +119,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    {% if bag %}
-                    {% include "inventory/components/container_picker.html" with select_field=form.container pinned_option_label="Auto select" pinned_option_value=bag.pk start_expanded=True hide_label=True %}
+                    {% if suggested_bag %}
+                    {% include "inventory/components/container_picker.html" with select_field=form.container pinned_option_label="Auto select" pinned_option_value=suggested_bag.pk start_expanded=True hide_label=True %}
                     {% else %}
                     {% include "inventory/components/container_picker.html" with select_field=form.container start_expanded=True hide_label=True %}
                     {% endif %}
@@ -131,22 +131,12 @@
 </form>
 
 <script>
-    var suggestedBagId = "{{ bag.pk|default:'' }}";
-    var suggestedBagName = "{{ bag.name|default:'' }}";
-
+    // Reload with the picked container as ?bag=<id> so the server renders
+    // its name/photo, rather than trying to patch the card via JS.
     document.querySelector('.container-picker').addEventListener('container-picker:change', function (e) {
-        var isSuggested = suggestedBagId && String(e.detail.value) === String(suggestedBagId);
-        document.getElementById('store-target-name').textContent = isSuggested ? suggestedBagName : e.detail.label;
-        var noBagAlert = document.getElementById('store-no-bag-alert');
-        if (noBagAlert) noBagAlert.style.display = 'none';
-        // We only know the suggested bag's photo up front; once a different
-        // container is picked, drop the (now possibly wrong) photo rather
-        // than show a stale one.
-        if (!isSuggested) {
-            var targetPhoto = document.getElementById('store-target-photo');
-            if (targetPhoto) targetPhoto.style.display = 'none';
-        }
-        $('#containerPickerModal').modal('hide');
+        var url = new URL(window.location.href);
+        url.searchParams.set('bag', e.detail.value);
+        window.location.href = url.toString();
     });
 
     {% if not bag %}

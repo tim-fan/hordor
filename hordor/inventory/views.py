@@ -276,7 +276,9 @@ class ContainerUpdateView(LoginRequiredMixin, generic.UpdateView):
 def store_item_view(request, pk):
     """
     Store an item. Defaults to the lowest-numbered empty bag; the user
-    can override this via the container picker on this page.
+    can override this via the container picker on this page, which
+    reloads the page with ?bag=<id> so the chosen container (photo
+    included) is rendered by the server rather than patched in by JS.
     GET: Show instruction page with the suggested (or chosen) container
     POST: Update item's container and redirect to item detail
     """
@@ -288,6 +290,16 @@ def store_item_view(request, pk):
 
     suggested_bag = get_lowest_available_bag()
 
+    target_bag_id = request.GET.get('bag')
+    bag = None
+    if target_bag_id:
+        try:
+            bag = Container.objects.filter(pk=target_bag_id).first()
+        except ValueError:
+            bag = None
+    if bag is None:
+        bag = suggested_bag
+
     if request.method == 'POST':
         form = ContainerSelectForm(request.POST)
         if form.is_valid():
@@ -297,12 +309,13 @@ def store_item_view(request, pk):
             messages.success(request, f"Item stored in {container.name}")
             return redirect('inventory:item_detail', pk=pk)
     else:
-        initial = {'container': suggested_bag.pk} if suggested_bag else None
+        initial = {'container': bag.pk} if bag else None
         form = ContainerSelectForm(initial=initial)
 
     context = {
         'item': item,
-        'bag': suggested_bag,
+        'bag': bag,
+        'suggested_bag': suggested_bag,
         'form': form,
     }
     return render(request, 'inventory/store_item.html', context)
