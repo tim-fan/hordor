@@ -61,7 +61,14 @@
          style="min-height: 0;">
 
         <div class="flow-card bg-light flow-card-equal">
-            {{ container.name }} &#128230;
+            {% if container.main_photo %}
+            <div class="flow-card-photo-image">
+                <img src="{{ container.main_photo.image.url }}" alt="{{ container.name }}">
+            </div>
+            {% endif %}
+            <div class="flow-card-photo-footer">
+                {{ container.name }} &#128230;
+            </div>
         </div>
 
         <div class="flow-arrow text-warning flex-shrink-0">&darr;</div>

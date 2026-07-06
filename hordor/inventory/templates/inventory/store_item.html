@@ -79,8 +79,15 @@
         <div class="flow-arrow text-primary flex-shrink-0">&darr;</div>
 
         <div class="flow-card bg-light flow-card-clickable flow-card-equal" data-toggle="modal" data-target="#containerPickerModal">
-            <div><span id="store-target-name">{{ bag.name|default:"Choose a container" }}</span> &#128230;</div>
-            <div class="small text-primary">Change</div>
+            {% if bag.main_photo %}
+            <div class="flow-card-photo-image" id="store-target-photo">
+                <img src="{{ bag.main_photo.image.url }}" alt="{{ bag.name }}">
+            </div>
+            {% endif %}
+            <div class="flow-card-photo-footer">
+                <div><span id="store-target-name">{{ bag.name|default:"Choose a container" }}</span> &#128230;</div>
+                <div class="small text-primary">Change</div>
+            </div>
         </div>
 
     </div>
@@ -132,6 +139,13 @@
         document.getElementById('store-target-name').textContent = isSuggested ? suggestedBagName : e.detail.label;
         var noBagAlert = document.getElementById('store-no-bag-alert');
         if (noBagAlert) noBagAlert.style.display = 'none';
+        // We only know the suggested bag's photo up front; once a different
+        // container is picked, drop the (now possibly wrong) photo rather
+        // than show a stale one.
+        if (!isSuggested) {
+            var targetPhoto = document.getElementById('store-target-photo');
+            if (targetPhoto) targetPhoto.style.display = 'none';
+        }
         $('#containerPickerModal').modal('hide');
     });
 
