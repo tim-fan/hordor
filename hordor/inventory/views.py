@@ -289,17 +289,17 @@ def store_item_view(request, pk):
         messages.error(request, "This item cannot be stored.")
         return redirect('inventory:item_detail', pk=pk)
 
-    suggested_bag = get_lowest_available_bag()
+    suggested_container = get_lowest_available_bag()
 
     target_container_id = request.GET.get('container')
-    bag = None
+    target_container = None
     if target_container_id:
         try:
-            bag = Container.objects.filter(pk=target_container_id).first()
+            target_container = Container.objects.filter(pk=target_container_id).first()
         except ValueError:
-            bag = None
-    if bag is None:
-        bag = suggested_bag
+            target_container = None
+    if target_container is None:
+        target_container = suggested_container
 
     if request.method == 'POST':
         form = ContainerSelectForm(request.POST)
@@ -310,13 +310,13 @@ def store_item_view(request, pk):
             messages.success(request, f"Item stored in {container.name}")
             return redirect('inventory:item_detail', pk=pk)
     else:
-        initial = {'container': bag.pk} if bag else None
+        initial = {'container': target_container.pk} if target_container else None
         form = ContainerSelectForm(initial=initial)
 
     context = {
         'item': item,
-        'bag': bag,
-        'suggested_bag': suggested_bag,
+        'target_container': target_container,
+        'suggested_container': suggested_container,
         'form': form,
     }
     return render(request, 'inventory/store_item.html', context)

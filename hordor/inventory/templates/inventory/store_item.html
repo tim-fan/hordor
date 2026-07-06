@@ -79,13 +79,13 @@
         <div class="flow-arrow text-primary flex-shrink-0">&darr;</div>
 
         <div class="flow-card bg-light flow-card-clickable flow-card-equal" data-toggle="modal" data-target="#containerPickerModal">
-            {% if bag.main_photo %}
+            {% if target_container.main_photo %}
             <div class="flow-card-photo-image">
-                <img src="{{ bag.main_photo.image.url }}" alt="{{ bag.name }}">
+                <img src="{{ target_container.main_photo.image.url }}" alt="{{ target_container.name }}">
             </div>
             {% endif %}
             <div class="flow-card-photo-footer">
-                <div>{{ bag.name|default:"Choose a container" }} &#128230;</div>
+                <div>{{ target_container.name|default:"Choose a container" }} &#128230;</div>
                 <div class="small text-primary">Change</div>
             </div>
         </div>
@@ -93,7 +93,7 @@
     </div>
 
     <div class="px-3 pb-3 flex-shrink-0">
-        {% if not bag %}
+        {% if not target_container %}
         <div class="alert alert-warning py-2 mb-2">
             <strong>No empty bags available</strong> &mdash; choose a container above to store this item in.
         </div>
@@ -119,8 +119,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    {% if suggested_bag %}
-                    {% include "inventory/components/container_picker.html" with select_field=form.container pinned_option_label="Auto select" pinned_option_value=suggested_bag.pk start_expanded=True hide_label=True %}
+                    {% if suggested_container %}
+                    {% include "inventory/components/container_picker.html" with select_field=form.container pinned_option_label="Auto select" pinned_option_value=suggested_container.pk start_expanded=True hide_label=True %}
                     {% else %}
                     {% include "inventory/components/container_picker.html" with select_field=form.container start_expanded=True hide_label=True %}
                     {% endif %}
@@ -139,7 +139,7 @@
         window.location.href = url.toString();
     });
 
-    {% if not bag %}
+    {% if not target_container %}
     $(function () {
         $('#containerPickerModal').modal('show');
     });
