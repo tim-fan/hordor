@@ -168,6 +168,14 @@
                             </div>
                         </li>
                         {% endif %}
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <form method="post" action="{% url 'logout' %}" class="mb-0">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-link btn btn-link border-0 bg-transparent">Log out</button>
+                            </form>
+                        </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>

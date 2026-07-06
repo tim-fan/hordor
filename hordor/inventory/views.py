@@ -437,6 +437,11 @@ def share_login_view(request, token):
     if link is None or link.is_expired():
         return render(request, 'inventory/share_expired.html', status=404)
 
+    # Don't downgrade a real logged-in user to the read-only viewer --
+    # opening a share link while logged in just goes to the dashboard.
+    if request.user.is_authenticated and request.user.username != SHARE_VIEWER_USERNAME:
+        return redirect('inventory:index')
+
     viewer, _ = User.objects.get_or_create(username=SHARE_VIEWER_USERNAME)
     if viewer.has_usable_password():
         viewer.set_unusable_password()

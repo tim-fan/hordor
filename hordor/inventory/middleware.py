@@ -29,7 +29,10 @@ class ReadOnlyShareMiddleware:
                 logout(request)
             else:
                 request.is_readonly_visitor = True
-                if request.method not in ('GET', 'HEAD'):
+                # /accounts/ (login, logout) stays POSTable, so a read-only
+                # session can always be escaped by logging out or logging in
+                # as a real user.
+                if request.method not in ('GET', 'HEAD') and not request.path.startswith('/accounts/'):
                     return HttpResponseForbidden("This is a read-only shared view.")
 
         return self.get_response(request)
