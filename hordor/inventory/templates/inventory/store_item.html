@@ -131,11 +131,11 @@
 </form>
 
 <script>
-    // Reload with the picked container as ?bag=<id> so the server renders
-    // its name/photo, rather than trying to patch the card via JS.
+    // Reload with the picked container as ?container=<id> so the server
+    // renders its name/photo, rather than trying to patch the card via JS.
     document.querySelector('.container-picker').addEventListener('container-picker:change', function (e) {
         var url = new URL(window.location.href);
-        url.searchParams.set('bag', e.detail.value);
+        url.searchParams.set('container', e.detail.value);
         window.location.href = url.toString();
     });
 

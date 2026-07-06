@@ -277,8 +277,9 @@ def store_item_view(request, pk):
     """
     Store an item. Defaults to the lowest-numbered empty bag; the user
     can override this via the container picker on this page, which
-    reloads the page with ?bag=<id> so the chosen container (photo
-    included) is rendered by the server rather than patched in by JS.
+    reloads the page with ?container=<id> so the chosen container
+    (photo included) is rendered by the server rather than patched in
+    by JS.
     GET: Show instruction page with the suggested (or chosen) container
     POST: Update item's container and redirect to item detail
     """
@@ -290,11 +291,11 @@ def store_item_view(request, pk):
 
     suggested_bag = get_lowest_available_bag()
 
-    target_bag_id = request.GET.get('bag')
+    target_container_id = request.GET.get('container')
     bag = None
-    if target_bag_id:
+    if target_container_id:
         try:
-            bag = Container.objects.filter(pk=target_bag_id).first()
+            bag = Container.objects.filter(pk=target_container_id).first()
         except ValueError:
             bag = None
     if bag is None:
