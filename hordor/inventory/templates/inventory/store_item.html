@@ -20,11 +20,14 @@
         line-height: 1.2;
     }
 
-    .flow-card-photo {
+    .flow-card-equal {
         display: flex;
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
         width: 100%;
         max-width: 360px;
+        flex: 1 1 0;
         min-height: 0;
     }
 
@@ -61,7 +64,7 @@
     <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center px-3 py-2"
          style="min-height: 0;">
 
-        <div class="flow-card flow-card-photo{% if item.main_photo %} flex-grow-1{% endif %}">
+        <div class="flow-card flow-card-equal">
             {% if item.main_photo %}
             <div class="flow-card-photo-image">
                 <img src="{{ item.main_photo.image.url }}" alt="{{ item.name }}">
@@ -75,7 +78,7 @@
 
         <div class="flow-arrow text-primary flex-shrink-0">&darr;</div>
 
-        <div class="flow-card bg-light flow-card-clickable flex-shrink-0" data-toggle="modal" data-target="#containerPickerModal">
+        <div class="flow-card bg-light flow-card-clickable flow-card-equal" data-toggle="modal" data-target="#containerPickerModal">
             <div><span id="store-target-name">{{ bag.name|default:"Choose a container" }}</span> &#128230;</div>
             <div class="small text-primary">Change</div>
         </div>
@@ -83,19 +86,19 @@
     </div>
 
     <div class="px-3 pb-3 flex-shrink-0">
-        <div class="d-flex justify-content-center mb-2">
-            <button type="submit" class="btn btn-primary btn-lg mr-2">Confirm Item Stored</button>
-            <a href="{% url 'inventory:item_detail' item.id %}" class="btn btn-secondary btn-lg">Cancel</a>
-        </div>
-
         {% if not bag %}
         <div class="alert alert-warning py-2 mb-2" id="store-no-bag-alert">
             <strong>No empty bags available</strong> &mdash; choose a container above to store this item in.
         </div>
         {% endif %}
 
-        <div class="alert alert-info py-2 mb-0">
-            <p class="mb-0 small">Once you have physically placed the item there, click confirm above.</p>
+        <div class="alert alert-info py-2 mb-2">
+            <p class="mb-0 small">Once you have physically placed the item there, click confirm below.</p>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary btn-lg mr-2">Confirm Item Stored</button>
+            <a href="{% url 'inventory:item_detail' item.id %}" class="btn btn-secondary btn-lg">Cancel</a>
         </div>
     </div>
 
