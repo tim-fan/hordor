@@ -150,7 +150,13 @@ class ItemTableView(LoginRequiredMixin, generic.ListView):
             except Container.DoesNotExist:
                 return items.none()
         if container_filter:
-            return items.filter(container_id=container_filter)
+            # Filter recursively: selecting a container also shows items
+            # stored in containers nested inside it, to any depth.
+            try:
+                root = Container.objects.get(pk=container_filter)
+            except (Container.DoesNotExist, ValueError):
+                return items.none()
+            return items.filter(container_id__in=root.descendant_ids())
 
         # No filter: default to hiding dispossessed items.
         try:

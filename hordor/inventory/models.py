@@ -33,6 +33,24 @@ class GenericObject(models.Model):
 
 class Container(GenericObject):
 
+    def descendant_ids(self):
+        """
+        IDs of this container and every container nested inside it, to any
+        depth. Walks the whole parent->children map in Python (one query);
+        fine at household scale, avoids per-level queries or a recursive CTE.
+        """
+        children = {}
+        for cid, parent_id in Container.objects.values_list('id', 'container_id'):
+            if parent_id is not None:
+                children.setdefault(parent_id, []).append(cid)
+        ids = [self.pk]
+        queue = [self.pk]
+        while queue:
+            kids = children.get(queue.pop(), [])
+            ids.extend(kids)
+            queue.extend(kids)
+        return ids
+
     def clean(self):
         super().clean()
         seen = {self.pk} if self.pk is not None else set()
