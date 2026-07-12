@@ -2,6 +2,7 @@ from django.db.models import Count, Max
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views import generic
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login
@@ -443,10 +444,17 @@ def share_login_view(request, token):
     if link is None or link.is_expired():
         return render(request, 'inventory/share_expired.html', status=404)
 
+    # Optional ?next= lets a share link land on a specific page (e.g. the
+    # browse table with a container filter). Restricted to in-site paths
+    # so the link can't redirect visitors to another host.
+    next_url = request.GET.get('next')
+    if not (next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts=None)):
+        next_url = None
+
     # Don't downgrade a real logged-in user to the read-only viewer --
-    # opening a share link while logged in just goes to the dashboard.
+    # opening a share link while logged in just goes to the target page.
     if request.user.is_authenticated and request.user.username != SHARE_VIEWER_USERNAME:
-        return redirect('inventory:index')
+        return redirect(next_url or 'inventory:index')
 
     viewer, _ = User.objects.get_or_create(username=SHARE_VIEWER_USERNAME)
     if viewer.has_usable_password():
@@ -457,4 +465,4 @@ def share_login_view(request, token):
     request.session['share_token'] = token
     request.session.set_expiry(int((link.expires_at - timezone.now()).total_seconds()))
 
-    return redirect('inventory:index')
+    return redirect(next_url or 'inventory:index')
