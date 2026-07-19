@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from .imaging import rotate_image_field
-from .middleware import SHARE_VIEWER_USERNAME
+from .middleware import SHARE_VIEWER_USERNAME, _get_share_viewer
 from .models import Item, Container, Photo, ItemMovement, ShareLink
 from .forms import ItemForm, ContainerForm, ContainerSelectForm
 import re
@@ -456,11 +456,7 @@ def share_login_view(request, token):
     if request.user.is_authenticated and request.user.username != SHARE_VIEWER_USERNAME:
         return redirect(next_url or 'inventory:index')
 
-    viewer, _ = User.objects.get_or_create(username=SHARE_VIEWER_USERNAME)
-    if viewer.has_usable_password():
-        viewer.set_unusable_password()
-        viewer.save(update_fields=['password'])
-
+    viewer = _get_share_viewer()
     login(request, viewer)
     request.session['share_token'] = token
     request.session.set_expiry(int((link.expires_at - timezone.now()).total_seconds()))
