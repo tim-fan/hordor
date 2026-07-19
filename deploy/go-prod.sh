@@ -9,7 +9,8 @@
 set -euo pipefail
 
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-REPO_ROOT="/home/tim/projects/20240505_hodor_small_object_store/hordor"
+# Repo root = parent of the deploy/ dir this script lives in
+REPO_ROOT="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
 
 echo "Stopping dev server..."
 tmux kill-session -t hordor_server 2>/dev/null || true
