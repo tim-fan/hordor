@@ -17,4 +17,6 @@ EXPOSE 8000
 # environment, so it runs at container start rather than at build time --
 # migrations are deliberately NOT run here, since every schema change in this
 # app is verified against an isolated DB copy first and applied manually.
-CMD ["sh", "-c", "python manage.py collectstatic --noinput && exec gunicorn hordor.wsgi:application --bind 0.0.0.0:8000"]
+# 2 workers x 4 threads: photo-heavy pages issue many parallel media
+# requests; gunicorn's default single sync worker serves them one at a time.
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && exec gunicorn hordor.wsgi:application --bind 0.0.0.0:8000 --workers 2 --threads 4"]

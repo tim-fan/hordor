@@ -5,8 +5,8 @@ set -euo pipefail
 
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 
-echo "Stopping prod container..."
-systemctl --user stop hordor
+echo "Stopping prod containers..."
+systemctl --user stop hordor hordor-lan
 
 echo "Starting dev server..."
 tmux kill-session -t hordor_server 2>/dev/null || true

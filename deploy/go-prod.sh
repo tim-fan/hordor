@@ -17,7 +17,7 @@ tmux kill-session -t hordor_server 2>/dev/null || true
 echo "Building image..."
 podman build -t hordor:latest -f "$REPO_ROOT/Containerfile" "$REPO_ROOT"
 
-echo "Starting prod container..."
-systemctl --user restart hordor
+echo "Starting prod containers..."
+systemctl --user restart hordor hordor-lan
 
-echo "Prod is live on :8000."
+echo "Prod is live on :8000 (public tunnel) and :8001 (LAN)."

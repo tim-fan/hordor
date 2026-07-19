@@ -1,0 +1,18 @@
+[Unit]
+Description=Hordor inventory app (LAN access, plain HTTP)
+After=network-online.target
+
+[Container]
+Image=localhost/hordor:latest
+# Bound on all interfaces (unlike the public container's 127.0.0.1) so
+# devices on the home LAN can reach it; ufw limits who actually can.
+PublishPort=8001:8000
+Volume=%h/projects/20240505_hodor_small_object_store/hordor/hordor/db.sqlite3:/app/hordor/db.sqlite3:Z
+Volume=%h/projects/20240505_hodor_small_object_store/hordor/hordor/media:/app/hordor/media:Z
+EnvironmentFile=%h/projects/20240505_hodor_small_object_store/hordor_secrets.lan.env
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
